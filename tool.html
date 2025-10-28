@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encoder/Decoder Tool</title>
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-black: rgba(0, 0, 0, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(167, 169, 169, 1);
+            --color-gray-400: rgba(119, 124, 124, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-brown-600: rgba(94, 82, 64, 1);
+            --color-charcoal-700: rgba(31, 33, 33, 1);
+            --color-charcoal-800: rgba(38, 40, 40, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-300: rgba(50, 184, 198, 1);
+            --color-teal-400: rgba(45, 166, 178, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            --color-red-400: rgba(255, 84, 89, 1);
+            --color-red-500: rgba(192, 21, 47, 1);
+            --color-green-500: rgba(34, 197, 94, 1);
+            --color-orange-500: rgba(249, 115, 22, 1);
+            --color-brown-600-rgb: 94, 82, 64;
+            --color-teal-500-rgb: 33, 128, 141;
+            --color-slate-900-rgb: 19, 52, 59;
+            --color-background: var(--color-cream-50);
+            --color-surface: var(--color-cream-100);
+            --color-text: var(--color-slate-900);
+            --color-text-secondary: var(--color-slate-500);
+            --color-primary: var(--color-teal-500);
+            --color-primary-hover: var(--color-teal-600);
+            --color-primary-active: var(--color-teal-700);
+            --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+            --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+            --color-btn-primary-text: var(--color-cream-50);
+            --color-error: var(--color-red-500);
+            --color-success: var(--color-green-500);
+            --color-warning: var(--color-orange-500);
+            --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+            --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-family-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+            --font-size-sm: 12px;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 550;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-gray-400-rgb: 119, 124, 124;
+                --color-teal-300-rgb: 50, 184, 198;
+                --color-gray-300-rgb: 167, 169, 169;
+                --color-gray-200-rgb: 245, 245, 245;
+                --color-background: var(--color-charcoal-700);
+                --color-surface: var(--color-charcoal-800);
+                --color-text: var(--color-gray-200);
+                --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+                --color-primary: var(--color-teal-300);
+                --color-primary-hover: var(--color-teal-400);
+                --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+                --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+                --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+                --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+                --color-error: var(--color-red-400);
+                --color-btn-primary-text: var(--color-slate-900);
+                --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding: var(--space-24);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-8);
+            color: var(--color-text);
+        }
+
+        .subtitle {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-32);
+            font-size: var(--font-size-base);
+        }
+
+        .main-panel {
+            background: var(--color-surface);
+            border: 1px solid var(--color-card-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-24);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-container {
+            display: flex;
+            gap: var(--space-8);
+            margin-bottom: var(--space-20);
+            border-bottom: 1px solid var(--color-border);
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: var(--space-12) var(--space-20);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--color-text);
+            background: var(--color-secondary);
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dual-panel {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: var(--space-16);
+            align-items: start;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-12);
+        }
+
+        .middle-actions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-12);
+            justify-content: center;
+            padding-top: 32px;
+        }
+
+        label {
+            display: block;
+            font-weight: var(--font-weight-medium);
+            margin-bottom: var(--space-8);
+            color: var(--color-text);
+            font-size: var(--font-size-base);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-sm);
+            background: var(--color-background);
+            color: var(--color-text);
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-focus-ring);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-8);
+        }
+
+        .btn {
+            padding: var(--space-12) var(--space-20);
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-8);
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: var(--color-btn-primary-text);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-primary:active {
+            background: var(--color-primary-active);
+        }
+
+        .btn-secondary {
+            background: var(--color-secondary);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-secondary-hover);
+        }
+
+        .btn-icon {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        .btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--color-focus-ring);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-12);
+            margin-bottom: var(--space-16);
+            padding: var(--space-12);
+            background: var(--color-background);
+            border-radius: var(--radius-base);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--color-border);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--color-primary);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .toggle-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            user-select: none;
+        }
+
+        .message {
+            margin-top: var(--space-8);
+            padding: var(--space-8) var(--space-12);
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-sm);
+            display: none;
+        }
+
+        .message.error {
+            background: rgba(192, 21, 47, 0.1);
+            color: var(--color-error);
+            display: block;
+        }
+
+        .message.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--color-success);
+            display: block;
+        }
+
+        .message.warning {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--color-warning);
+            display: block;
+        }
+
+        /* Hash Grid */
+        .hash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-16);
+        }
+
+        .hash-result {
+            background: var(--color-background);
+            padding: var(--space-12);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border);
+        }
+
+        .hash-label {
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-8);
+            color: var(--color-text);
+            font-size: var(--font-size-sm);
+        }
+
+        .hash-value {
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-sm);
+            word-break: break-all;
+            color: var(--color-text-secondary);
+            user-select: all;
+        }
+
+        /* Detection Results */
+        .detection-results {
+            background: var(--color-background);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            padding: var(--space-16);
+            margin-top: var(--space-16);
+        }
+
+        .detection-item {
+            padding: var(--space-12);
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            margin-bottom: var(--space-12);
+        }
+
+        .detection-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .detection-type {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-primary);
+            margin-bottom: var(--space-8);
+        }
+
+        .detection-value {
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-text);
+            word-break: break-all;
+            background: var(--color-background);
+            padding: var(--space-8);
+            border-radius: var(--radius-base);
+        }
+
+        /* Preset Payloads */
+        .preset-section {
+            background: var(--color-background);
+            padding: var(--space-16);
+            border-radius: var(--radius-base);
+            margin-bottom: var(--space-16);
+        }
+
+        .preset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-12);
+        }
+
+        .preset-title {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text);
+        }
+
+        .preset-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-8);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .preset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-8);
+            background: var(--color-surface);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border);
+        }
+
+        .preset-name {
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-text);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preset-actions {
+            display: flex;
+            gap: var(--space-8);
+        }
+
+        .preset-btn {
+            padding: var(--space-8) var(--space-12);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Select Dropdown */
+        select {
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            background: var(--color-background);
+            color: var(--color-text);
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-focus-ring);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: var(--color-background);
+            padding: var(--space-12);
+            border-radius: var(--radius-base);
+            border-left: 3px solid var(--color-primary);
+            margin-top: var(--space-16);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        @media (max-width: 1024px) {
+            .dual-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .middle-actions {
+                flex-direction: row;
+                padding-top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: var(--space-16);
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Encoder/Decoder</h1>
+
+        <div class="main-panel">
+            <div class="tab-container">
+                <button class="tab active" data-tab="base64">Base64</button>
+                <button class="tab" data-tab="url">URL</button>
+                <button class="tab" data-tab="double-url">Double URL</button>
+                <button class="tab" data-tab="html">HTML</button>
+                <button class="tab" data-tab="hex">Hex</button>
+                <button class="tab" data-tab="unicode">Unicode</button>
+                <button class="tab" data-tab="xss">XSS Tools</button>
+                <button class="tab" data-tab="jwt">JWT</button>
+                <button class="tab" data-tab="hash">Hash</button>
+                <button class="tab" data-tab="smart">Smart Detect</button>
+                <button class="tab" data-tab="presets">Presets</button>
+            </div>
+
+            <!-- Base64 Tab -->
+            <div class="tab-content active" id="base64">
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="base64-realtime">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">실시간 변환 활성화</span>
+                </div>
+
+                <div class="dual-panel">
+                    <div class="panel">
+                        <label for="base64-input">입력</label>
+                        <textarea id="base64-input" placeholder="인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('base64-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('base64-input')">📋 복사</button>
+                        </div>
+                    </div>
+
+                    <div class="middle-actions">
+                        <button class="btn btn-primary" onclick="autoConvertBase64()">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" onclick="encodeBase64()">→ 인코딩</button>
+                        <button class="btn btn-secondary" onclick="decodeBase64()">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" onclick="swapText('base64-input', 'base64-output')" title="입출력 교환">⇄</button>
+                    </div>
+
+                    <div class="panel">
+                        <label for="base64-output">출력</label>
+                        <textarea id="base64-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('base64-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('base64-output')">📋 복사</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="base64-message" class="message"></div>
+            </div>
+
+            <!-- URL Tab -->
+            <div class="tab-content" id="url">
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="url-realtime">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">실시간 변환 활성화</span>
+                </div>
+
+                <div class="dual-panel">
+                    <div class="panel">
+                        <label for="url-input">입력</label>
+                        <textarea id="url-input" placeholder="URL 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('url-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('url-input')">📋 복사</button>
+                        </div>
+                    </div>
+
+                    <div class="middle-actions">
+                        <button class="btn btn-primary" onclick="autoConvertURL()">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" onclick="encodeURL()">→ 인코딩</button>
+                        <button class="btn btn-secondary" onclick="decodeURL()">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" onclick="swapText('url-input', 'url-output')" title="입출력 교환">⇄</button>
+                    </div>
+
+                    <div class="panel">
+                        <label for="url-output">출력</label>
+                        <textarea id="url-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('url-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('url-output')">📋 복사</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="url-message" class="message"></div>
+            </div>
+
+            <!-- Double URL Encoding Tab -->
+            <div class="tab-content" id="double-url">
+                <div class="info-box">
+                    <strong>💡 Double URL Encoding:</strong> WAF 우회에 사용되는 기법으로, % 문자를 %25로 인코딩합니다. 
+                    예: &lt; → %3C → %253C
+                </div>
+
+                <div class="dual-panel">
+                    <div class="panel">
+                        <label for="double-url-input">입력</label>
+                        <textarea id="double-url-input" placeholder="Double URL 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('double-url-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('double-url-input')">📋 복사</button>
+                        </div>
+                    </div>
+
+                    <div class="middle-actions">
+                        <button class="btn btn-primary" onclick="encodeDoubleURL()">→ Double Encode</button>
+                        <button class="btn btn-secondary" onclick="decodeDoubleURL()">← Double Decode</button>
+                        <button class="btn btn-secondary btn-icon" onclick="swapText('double-url-input', 'double-url-output')" title="입출력 교환">⇄</button>
+                    </div>
+
+                    <div class="panel">
+                        <label for="double-url-output">출력</label>
+                        <textarea id="double-url-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('double-url-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('double-url-output')">📋 복사</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="double-url-message" class="message"></div>
+            </div>
+
+            <!-- HTML Tab -->
+            <div class="tab-content" id="html">
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="html-realtime">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">실시간 변환 활성화</span>
+                </div>
+
+                <div class="dual-panel">
+                    <div class="panel">
+                        <label for="html-input">입력</label>
+                        <textarea id="html-input" placeholder="HTML 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('html-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('html-input')">📋 복사</button>
+                        </div>
+                    </div>
+
+                    <div class="middle-actions">
+                        <button class="btn btn-primary" onclick="autoConvertHTML()">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" onclick="encodeHTML()">→ 인코딩</button>
+                        <button class="btn btn-secondary" onclick="decodeHTML()">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" onclick="swapText('html-input', 'html-output')" title="입출력 교환">⇄</button>
+                    </div>
+
+                    <div class="panel">
+                        <label for="html-output">출력</label>
+                        <textarea id="html-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('html-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('html-output')">📋 복사</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="html-message" class="message"></div>
+            </div>
+
+            <!-- Hex Tab -->
+            <div class="tab-content" id="hex">
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="hex-realtime">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">실시간 변환 활성화</span>
+                </div>
+
+                <div class="dual-panel">
+                    <div class="panel">
+                        <label for="hex-input">입력</label>
+                        <textarea id="hex-input" placeholder="Hex 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('hex-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('hex-input')">📋 복사</button>
+                        </div>
+                    </div>
+
+                    <div class="middle-actions">
+                        <button class="btn btn-primary" onclick="autoConvertHex()">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" onclick="encodeHex()">→ 인코딩</button>
+                        <button class="btn btn-secondary" onclick="decodeHex()">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" onclick="swapText('hex-input', 'hex-output')" title="입출력 교환">⇄</button>
+                    </div>
+
+                    <div class="panel">
+                        <label for="hex-output">출력</label>
+                        <textarea id="hex-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('hex-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('hex-output')">📋 복사</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="hex-message" class="message"></div>
+            </div>
+
+            <!-- Unicode Tab -->
+            <div class="tab-content" id="unicode">
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="unicode-realtime">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">실시간 변환 활성화</span>
+                </div>
+
+                <div class="dual-panel">
+                    <div class="panel">
+                        <label for="unicode-input">입력</label>
+                        <textarea id="unicode-input" placeholder="Unicode 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('unicode-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('unicode-input')">📋 복사</button>
+                        </div>
+                    </div>
+
+                    <div class="middle-actions">
+                        <button class="btn btn-primary" onclick="autoConvertUnicode()">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" onclick="encodeUnicode()">→ 인코딩</button>
+                        <button class="btn btn-secondary" onclick="decodeUnicode()">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" onclick="swapText('unicode-input', 'unicode-output')" title="입출력 교환">⇄</button>
+                    </div>
+
+                    <div class="panel">
+                        <label for="unicode-output">출력</label>
+                        <textarea id="unicode-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" onclick="clearText('unicode-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" onclick="copyText('unicode-output')">📋 복사</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="unicode-message" class="message"></div>
+            </div>
+
+            <!-- XSS Tools Tab -->
+            <div class="tab-content" id="xss">
+                <div class="info-box">
+                    <strong>🛡️ XSS 난독화 도구:</strong> JavaScript 문자열을 다양한 방식으로 인코딩하여 WAF/필터를 우회합니다.
+                </div>
+
+                <div class="panel">
+                    <label for="xss-input">입력 텍스트</label>
+                    <textarea id="xss-input" placeholder="난독화할 JavaScript 코드를 입력하세요... (예: alert(1))"></textarea>
+
+                    <label for="xss-method">난독화 방식 선택</label>
+                    <select id="xss-method">
+                        <option value="hex">Hex Encoding (\x41\x6c\x65\x72\x74)</option>
+                        <option value="unicode">Unicode Escape (\u0061\u006c\u0065\u0072\u0074)</option>
+                        <option value="octal">Octal Encoding (\141\154\145\162\164)</option>
+                        <option value="char">String.fromCharCode(97,108,...)</option>
+                        <option value="html-entity-decimal">HTML Entity Decimal (&#97;&#108;...)</option>
+                        <option value="html-entity-hex">HTML Entity Hex (&#x61;&#x6c;...)</option>
+                        <option value="concat">String Concatenation ('al'+'ert')</option>
+                        <option value="eval-base64">eval(atob('base64'))</option>
+                    </select>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="obfuscateXSS()">🔀 난독화 실행</button>
+                        <button class="btn btn-secondary" onclick="clearText('xss-input')">🗑️ 초기화</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <label for="xss-output">난독화 결과</label>
+                    <textarea id="xss-output" placeholder="난독화된 결과가 여기에 표시됩니다..." readonly></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="copyText('xss-output')">📋 복사</button>
+                    </div>
+                </div>
+                <div id="xss-message" class="message"></div>
+            </div>
+
+            <!-- JWT Tab -->
+            <div class="tab-content" id="jwt">
+                <div class="panel">
+                    <label for="jwt-input">JWT 토큰</label>
+                    <textarea id="jwt-input" placeholder="JWT 토큰을 입력하세요... (예: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...)"></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="decodeJWT()">🔓 디코딩</button>
+                        <button class="btn btn-secondary" onclick="clearText('jwt-input')">🗑️ 초기화</button>
+                        <button class="btn btn-secondary" onclick="copyText('jwt-input')">📋 복사</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <label for="jwt-output">디코딩 결과</label>
+                    <textarea id="jwt-output" placeholder="JWT 토큰 디코딩 결과가 여기에 표시됩니다..." readonly></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="copyText('jwt-output')">📋 복사</button>
+                    </div>
+                </div>
+                <div id="jwt-message" class="message"></div>
+            </div>
+
+            <!-- Hash Tab -->
+            <div class="tab-content" id="hash">
+                <div class="panel">
+                    <label for="hash-input">입력 텍스트</label>
+                    <textarea id="hash-input" placeholder="해시를 생성할 텍스트를 입력하세요..."></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="generateAllHashes()">🔐 모든 해시 생성</button>
+                        <button class="btn btn-secondary" onclick="clearText('hash-input')">🗑️ 초기화</button>
+                    </div>
+                </div>
+
+                <div class="hash-grid" id="hash-results" style="margin-top: var(--space-20); display: none;">
+                    <div class="hash-result">
+                        <div class="hash-label">MD5</div>
+                        <div class="hash-value" id="hash-md5">-</div>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-md5')">📋 복사</button>
+                    </div>
+                    <div class="hash-result">
+                        <div class="hash-label">SHA-1</div>
+                        <div class="hash-value" id="hash-sha1">-</div>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-sha1')">📋 복사</button>
+                    </div>
+                    <div class="hash-result">
+                        <div class="hash-label">SHA-256</div>
+                        <div class="hash-value" id="hash-sha256">-</div>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-sha256')">📋 복사</button>
+                    </div>
+                    <div class="hash-result">
+                        <div class="hash-label">SHA-384</div>
+                        <div class="hash-value" id="hash-sha384">-</div>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-sha384')">📋 복사</button>
+                    </div>
+                    <div class="hash-result">
+                        <div class="hash-label">SHA-512</div>
+                        <div class="hash-value" id="hash-sha512">-</div>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-sha512')">📋 복사</button>
+                    </div>
+                </div>
+                <div id="hash-message" class="message"></div>
+            </div>
+
+            <!-- Smart Detection Tab -->
+            <div class="tab-content" id="smart">
+                <div class="info-box">
+                    <strong>🧠 Smart Detection:</strong> 입력된 값을 자동으로 분석하여 적용된 인코딩 방식을 감지하고 모든 가능한 디코딩 결과를 표시합니다.
+                </div>
+
+                <div class="panel">
+                    <label for="smart-input">분석할 텍스트</label>
+                    <textarea id="smart-input" placeholder="자동 감지할 텍스트를 입력하세요..."></textarea>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="smartDetect()">🔍 자동 감지 및 디코딩</button>
+                        <button class="btn btn-secondary" onclick="clearText('smart-input')">🗑️ 초기화</button>
+                    </div>
+                </div>
+
+                <div id="smart-results" class="detection-results" style="display: none;">
+                    <h3 style="margin-bottom: var(--space-16); color: var(--color-text);">감지된 인코딩 방식 및 디코딩 결과</h3>
+                    <div id="smart-results-content"></div>
+                </div>
+                <div id="smart-message" class="message"></div>
+            </div>
+
+            <!-- Presets Tab -->
+            <div class="tab-content" id="presets">
+                <div class="info-box">
+                    <strong>💾 Preset Payloads:</strong> 자주 사용하는 페이로드를 저장하고 불러올 수 있습니다. 브라우저 로컬 스토리지에 저장됩니다.
+                </div>
+
+                <div class="preset-section">
+                    <div class="preset-header">
+                        <span class="preset-title">새 페이로드 저장</span>
+                    </div>
+                    <div class="panel">
+                        <label for="preset-name">페이로드 이름</label>
+                        <input type="text" id="preset-name" placeholder="예: SQL Union Select" style="width: 100%; padding: var(--space-12); border: 1px solid var(--color-border); border-radius: var(--radius-base); background: var(--color-background); color: var(--color-text); font-family: var(--font-family-base); margin-bottom: var(--space-12);">
+
+                        <label for="preset-category">카테고리</label>
+                        <select id="preset-category" style="width: 100%; margin-bottom: var(--space-12);">
+                            <option value="sqli">SQL Injection</option>
+                            <option value="xss">XSS</option>
+                            <option value="lfi">LFI/Path Traversal</option>
+                            <option value="xxe">XXE</option>
+                            <option value="ssti">SSTI</option>
+                            <option value="other">기타</option>
+                        </select>
+
+                        <label for="preset-payload">페이로드</label>
+                        <textarea id="preset-payload" placeholder="저장할 페이로드를 입력하세요..." style="min-height: 120px;"></textarea>
+
+                        <button class="btn btn-primary" onclick="savePreset()" style="width: 100%; margin-top: var(--space-12);">💾 페이로드 저장</button>
+                    </div>
+                </div>
+
+                <div class="preset-section">
+                    <div class="preset-header">
+                        <span class="preset-title">저장된 페이로드</span>
+                        <button class="btn btn-secondary preset-btn" onclick="loadPresets()">🔄 새로고침</button>
+                    </div>
+
+                    <div>
+                        <label for="preset-filter">카테고리 필터</label>
+                        <select id="preset-filter" onchange="filterPresets()" style="width: 100%; margin-bottom: var(--space-12);">
+                            <option value="all">전체</option>
+                            <option value="sqli">SQL Injection</option>
+                            <option value="xss">XSS</option>
+                            <option value="lfi">LFI/Path Traversal</option>
+                            <option value="xxe">XXE</option>
+                            <option value="ssti">SSTI</option>
+                            <option value="other">기타</option>
+                        </select>
+                    </div>
+
+                    <div id="preset-list" class="preset-list">
+                        <div style="text-align: center; padding: var(--space-20); color: var(--color-text-secondary);">
+                            저장된 페이로드가 없습니다.
+                        </div>
+                    </div>
+                </div>
+                <div id="presets-message" class="message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+
+                // Load presets when switching to presets tab
+                if (tabName === 'presets') {
+                    loadPresets();
+                }
+            });
+        });
+
+        // Real-time conversion setup
+        function setupRealtimeConversion(inputId, realtimeToggleId, convertFunction) {
+            const input = document.getElementById(inputId);
+            const toggle = document.getElementById(realtimeToggleId);
+            
+            input.addEventListener('input', () => {
+                if (toggle.checked) {
+                    convertFunction();
+                }
+            });
+        }
+
+        // Setup all real-time conversions
+        setupRealtimeConversion('base64-input', 'base64-realtime', autoConvertBase64);
+        setupRealtimeConversion('url-input', 'url-realtime', autoConvertURL);
+        setupRealtimeConversion('html-input', 'html-realtime', autoConvertHTML);
+        setupRealtimeConversion('hex-input', 'hex-realtime', autoConvertHex);
+        setupRealtimeConversion('unicode-input', 'unicode-realtime', autoConvertUnicode);
+
+        // Utility functions
+        function showMessage(messageId, text, type = 'success') {
+            const msg = document.getElementById(messageId);
+            msg.textContent = text;
+            msg.className = 'message ' + type;
+            setTimeout(() => {
+                msg.className = 'message';
+                msg.textContent = '';
+            }, 3000);
+        }
+
+        function clearText(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.value = '';
+            }
+        }
+
+        function copyText(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.value || element.textContent;
+            
+            if (!text || text === '-') {
+                return;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                const tabId = elementId.split('-')[0];
+                showMessage(tabId + '-message', '✓ 클립보드에 복사되었습니다', 'success');
+            }).catch(err => {
+                const tabId = elementId.split('-')[0];
+                showMessage(tabId + '-message', '복사 실패: ' + err.message, 'error');
+            });
+        }
+
+        function swapText(inputId, outputId) {
+            const input = document.getElementById(inputId);
+            const output = document.getElementById(outputId);
+            const temp = input.value;
+            input.value = output.value;
+            output.value = temp;
+        }
+
+        // Base64 functions
+        function isBase64(str) {
+            if (!str || str.length % 4 !== 0) return false;
+            try {
+                return btoa(atob(str)) === str;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function autoConvertBase64() {
+            const input = document.getElementById('base64-input').value;
+            if (!input) {
+                showMessage('base64-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+
+            if (isBase64(input)) {
+                decodeBase64();
+            } else {
+                encodeBase64();
+            }
+        }
+
+        function encodeBase64() {
+            const input = document.getElementById('base64-input').value;
+            if (!input) {
+                showMessage('base64-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            try {
+                const encoded = btoa(unescape(encodeURIComponent(input)));
+                document.getElementById('base64-output').value = encoded;
+                showMessage('base64-message', '✓ Base64 인코딩 완료', 'success');
+            } catch (e) {
+                showMessage('base64-message', '인코딩 실패: ' + e.message, 'error');
+            }
+        }
+
+        function decodeBase64() {
+            const input = document.getElementById('base64-input').value;
+            if (!input) {
+                showMessage('base64-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            try {
+                const decoded = decodeURIComponent(escape(atob(input)));
+                document.getElementById('base64-output').value = decoded;
+                showMessage('base64-message', '✓ Base64 디코딩 완료', 'success');
+            } catch (e) {
+                showMessage('base64-message', '디코딩 실패: 잘못된 Base64 형식', 'error');
+            }
+        }
+
+        // URL functions
+        function isURLEncoded(str) {
+            try {
+                return decodeURIComponent(str) !== str;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function autoConvertURL() {
+            const input = document.getElementById('url-input').value;
+            if (!input) {
+                showMessage('url-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+
+            if (isURLEncoded(input)) {
+                decodeURL();
+            } else {
+                encodeURL();
+            }
+        }
+
+        function encodeURL() {
+            const input = document.getElementById('url-input').value;
+            if (!input) {
+                showMessage('url-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            try {
+                const encoded = encodeURIComponent(input);
+                document.getElementById('url-output').value = encoded;
+                showMessage('url-message', '✓ URL 인코딩 완료', 'success');
+            } catch (e) {
+                showMessage('url-message', '인코딩 실패: ' + e.message, 'error');
+            }
+        }
+
+        function decodeURL() {
+            const input = document.getElementById('url-input').value;
+            if (!input) {
+                showMessage('url-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            try {
+                const decoded = decodeURIComponent(input);
+                document.getElementById('url-output').value = decoded;
+                showMessage('url-message', '✓ URL 디코딩 완료', 'success');
+            } catch (e) {
+                showMessage('url-message', '디코딩 실패: 잘못된 URL 인코딩', 'error');
+            }
+        }
+
+        // Double URL Encoding functions
+        function encodeDoubleURL() {
+            const input = document.getElementById('double-url-input').value;
+            if (!input) {
+                showMessage('double-url-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            try {
+                // First encoding
+                const firstEncode = encodeURIComponent(input);
+                // Second encoding
+                const doubleEncoded = encodeURIComponent(firstEncode);
+                document.getElementById('double-url-output').value = doubleEncoded;
+                showMessage('double-url-message', '✓ Double URL 인코딩 완료', 'success');
+            } catch (e) {
+                showMessage('double-url-message', '인코딩 실패: ' + e.message, 'error');
+            }
+        }
+
+        function decodeDoubleURL() {
+            const input = document.getElementById('double-url-input').value;
+            if (!input) {
+                showMessage('double-url-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            try {
+                // First decoding
+                const firstDecode = decodeURIComponent(input);
+                // Second decoding
+                const doubleDecoded = decodeURIComponent(firstDecode);
+                document.getElementById('double-url-output').value = doubleDecoded;
+                showMessage('double-url-message', '✓ Double URL 디코딩 완료', 'success');
+            } catch (e) {
+                showMessage('double-url-message', '디코딩 실패: ' + e.message, 'error');
+            }
+        }
+
+        // HTML functions
+        function isHTMLEncoded(str) {
+            return /&[a-z]+;|&#[0-9]+;|&#x[0-9a-f]+;/i.test(str);
+        }
+
+        function autoConvertHTML() {
+            const input = document.getElementById('html-input').value;
+            if (!input) {
+                showMessage('html-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+
+            if (isHTMLEncoded(input)) {
+                decodeHTML();
+            } else {
+                encodeHTML();
+            }
+        }
+
+        function encodeHTML() {
+            const input = document.getElementById('html-input').value;
+            if (!input) {
+                showMessage('html-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            const encoded = input
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#x27;')
+                .replace(/\//g, '&#x2F;');
+            document.getElementById('html-output').value = encoded;
+            showMessage('html-message', '✓ HTML 인코딩 완료', 'success');
+        }
+
+        function decodeHTML() {
+            const input = document.getElementById('html-input').value;
+            if (!input) {
+                showMessage('html-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = input;
+            const decoded = textarea.value;
+            document.getElementById('html-output').value = decoded;
+            showMessage('html-message', '✓ HTML 디코딩 완료', 'success');
+        }
+
+        // Hex functions
+        function isHexEncoded(str) {
+            const cleaned = str.replace(/\s/g, '');
+            return /^[0-9a-fA-F]+$/.test(cleaned) && cleaned.length % 2 === 0 && cleaned.length >= 4;
+        }
+
+        function autoConvertHex() {
+            const input = document.getElementById('hex-input').value;
+            if (!input) {
+                showMessage('hex-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+
+            if (isHexEncoded(input)) {
+                decodeHex();
+            } else {
+                encodeHex();
+            }
+        }
+
+        function encodeHex() {
+            const input = document.getElementById('hex-input').value;
+            if (!input) {
+                showMessage('hex-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            const encoded = Array.from(input)
+                .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
+                .join('');
+            document.getElementById('hex-output').value = encoded;
+            showMessage('hex-message', '✓ Hex 인코딩 완료', 'success');
+        }
+
+        function decodeHex() {
+            const input = document.getElementById('hex-input').value.replace(/\s/g, '');
+            if (!input) {
+                showMessage('hex-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            if (!/^[0-9a-fA-F]+$/.test(input) || input.length % 2 !== 0) {
+                showMessage('hex-message', '디코딩 실패: 잘못된 Hex 형식', 'error');
+                return;
+            }
+            try {
+                const decoded = input.match(/.{1,2}/g)
+                    .map(byte => String.fromCharCode(parseInt(byte, 16)))
+                    .join('');
+                document.getElementById('hex-output').value = decoded;
+                showMessage('hex-message', '✓ Hex 디코딩 완료', 'success');
+            } catch (e) {
+                showMessage('hex-message', '디코딩 실패: ' + e.message, 'error');
+            }
+        }
+
+        // Unicode functions
+        function isUnicodeEncoded(str) {
+            return /\\u[0-9a-fA-F]{4}/.test(str);
+        }
+
+        function autoConvertUnicode() {
+            const input = document.getElementById('unicode-input').value;
+            if (!input) {
+                showMessage('unicode-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+
+            if (isUnicodeEncoded(input)) {
+                decodeUnicode();
+            } else {
+                encodeUnicode();
+            }
+        }
+
+        function encodeUnicode() {
+            const input = document.getElementById('unicode-input').value;
+            if (!input) {
+                showMessage('unicode-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            const encoded = Array.from(input)
+                .map(c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))
+                .join('');
+            document.getElementById('unicode-output').value = encoded;
+            showMessage('unicode-message', '✓ Unicode 인코딩 완료', 'success');
+        }
+
+        function decodeUnicode() {
+            const input = document.getElementById('unicode-input').value;
+            if (!input) {
+                showMessage('unicode-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+            try {
+                const decoded = input.replace(/\\u([0-9a-fA-F]{4})/g, (match, grp) => {
+                    return String.fromCharCode(parseInt(grp, 16));
+                });
+                document.getElementById('unicode-output').value = decoded;
+                showMessage('unicode-message', '✓ Unicode 디코딩 완료', 'success');
+            } catch (e) {
+                showMessage('unicode-message', '디코딩 실패: ' + e.message, 'error');
+            }
+        }
+
+        // XSS Obfuscation functions
+        function obfuscateXSS() {
+            const input = document.getElementById('xss-input').value;
+            const method = document.getElementById('xss-method').value;
+
+            if (!input) {
+                showMessage('xss-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+
+            let output = '';
+
+            try {
+                switch (method) {
+                    case 'hex':
+                        // \x41\x6c\x65\x72\x74
+                        output = Array.from(input)
+                            .map(c => '\\x' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+                            .join('');
+                        break;
+
+                    case 'unicode':
+                        // \u0061\u006c\u0065\u0072\u0074
+                        output = Array.from(input)
+                            .map(c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))
+                            .join('');
+                        break;
+
+                    case 'octal':
+                        // \141\154\145\162\164
+                        output = Array.from(input)
+                            .map(c => '\\' + c.charCodeAt(0).toString(8))
+                            .join('');
+                        break;
+
+                    case 'char':
+                        // String.fromCharCode(97,108,101,114,116)
+                        const charCodes = Array.from(input)
+                            .map(c => c.charCodeAt(0))
+                            .join(',');
+                        output = `String.fromCharCode(${charCodes})`;
+                        break;
+
+                    case 'html-entity-decimal':
+                        // &#97;&#108;&#101;&#114;&#116;
+                        output = Array.from(input)
+                            .map(c => '&#' + c.charCodeAt(0) + ';')
+                            .join('');
+                        break;
+
+                    case 'html-entity-hex':
+                        // &#x61;&#x6c;&#x65;&#x72;&#x74;
+                        output = Array.from(input)
+                            .map(c => '&#x' + c.charCodeAt(0).toString(16) + ';')
+                            .join('');
+                        break;
+
+                    case 'concat':
+                        // 'al'+'ert'
+                        const chunks = [];
+                        for (let i = 0; i < input.length; i += 2) {
+                            chunks.push("'" + input.substring(i, i + 2) + "'");
+                        }
+                        output = chunks.join('+');
+                        break;
+
+                    case 'eval-base64':
+                        // eval(atob('YWxlcnQ='))
+                        const base64 = btoa(unescape(encodeURIComponent(input)));
+                        output = `eval(atob('${base64}'))`;
+                        break;
+
+                    default:
+                        output = input;
+                }
+
+                document.getElementById('xss-output').value = output;
+                showMessage('xss-message', '✓ XSS 난독화 완료', 'success');
+            } catch (e) {
+                showMessage('xss-message', '난독화 실패: ' + e.message, 'error');
+            }
+        }
+
+        // JWT functions
+        function decodeJWT() {
+            const input = document.getElementById('jwt-input').value.trim();
+            if (!input) {
+                showMessage('jwt-message', 'JWT 토큰을 입력하세요', 'error');
+                return;
+            }
+            
+            const parts = input.split('.');
+            if (parts.length !== 3) {
+                showMessage('jwt-message', '디코딩 실패: 잘못된 JWT 형식', 'error');
+                return;
+            }
+            
+            try {
+                const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+                const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+                
+                let result = '=== HEADER ===\n' + JSON.stringify(header, null, 2);
+                result += '\n\n=== PAYLOAD ===\n' + JSON.stringify(payload, null, 2);
+                result += '\n\n=== SIGNATURE ===\n' + parts[2];
+                
+                // Decode timestamps if present
+                if (payload.exp) {
+                    const expDate = new Date(payload.exp * 1000);
+                    result += '\n\n=== DECODED TIMESTAMPS ===';
+                    result += '\nExpiration (exp): ' + expDate.toLocaleString('ko-KR') + ' (' + expDate.toISOString() + ')';
+                }
+                if (payload.iat) {
+                    const iatDate = new Date(payload.iat * 1000);
+                    result += '\nIssued At (iat): ' + iatDate.toLocaleString('ko-KR') + ' (' + iatDate.toISOString() + ')';
+                }
+                if (payload.nbf) {
+                    const nbfDate = new Date(payload.nbf * 1000);
+                    result += '\nNot Before (nbf): ' + nbfDate.toLocaleString('ko-KR') + ' (' + nbfDate.toISOString() + ')';
+                }
+                
+                document.getElementById('jwt-output').value = result;
+                showMessage('jwt-message', '✓ JWT 디코딩 완료', 'success');
+            } catch (e) {
+                showMessage('jwt-message', '디코딩 실패: 잘못된 JWT 형식', 'error');
+            }
+        }
+
+        // Hash functions
+        async function generateAllHashes() {
+            const input = document.getElementById('hash-input').value;
+            if (!input) {
+                showMessage('hash-message', '입력 텍스트를 입력하세요', 'error');
+                return;
+            }
+
+            try {
+                // MD5
+                document.getElementById('hash-md5').textContent = md5(input);
+
+                // SHA-1
+                const sha1Hash = await generateHash('SHA-1', input);
+                document.getElementById('hash-sha1').textContent = sha1Hash;
+
+                // SHA-256
+                const sha256Hash = await generateHash('SHA-256', input);
+                document.getElementById('hash-sha256').textContent = sha256Hash;
+
+                // SHA-384
+                const sha384Hash = await generateHash('SHA-384', input);
+                document.getElementById('hash-sha384').textContent = sha384Hash;
+
+                // SHA-512
+                const sha512Hash = await generateHash('SHA-512', input);
+                document.getElementById('hash-sha512').textContent = sha512Hash;
+
+                document.getElementById('hash-results').style.display = 'grid';
+                showMessage('hash-message', '✓ 모든 해시 생성 완료', 'success');
+            } catch (e) {
+                showMessage('hash-message', '해시 생성 실패: ' + e.message, 'error');
+            }
+        }
+
+        async function generateHash(algorithm, input) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(input);
+            const hashBuffer = await crypto.subtle.digest(algorithm, data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // MD5 implementation
+        function md5(string) {
+            function rotateLeft(value, amount) {
+                return (value << amount) | (value >>> (32 - amount));
+            }
+            
+            function addUnsigned(x, y) {
+                const lsw = (x & 0xFFFF) + (y & 0xFFFF);
+                const msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+                return (msw << 16) | (lsw & 0xFFFF);
+            }
+            
+            function F(x, y, z) { return (x & y) | ((~x) & z); }
+            function G(x, y, z) { return (x & z) | (y & (~z)); }
+            function H(x, y, z) { return x ^ y ^ z; }
+            function I(x, y, z) { return y ^ (x | (~z)); }
+            
+            function FF(a, b, c, d, x, s, ac) {
+                a = addUnsigned(a, addUnsigned(addUnsigned(F(b, c, d), x), ac));
+                return addUnsigned(rotateLeft(a, s), b);
+            }
+            
+            function GG(a, b, c, d, x, s, ac) {
+                a = addUnsigned(a, addUnsigned(addUnsigned(G(b, c, d), x), ac));
+                return addUnsigned(rotateLeft(a, s), b);
+            }
+            
+            function HH(a, b, c, d, x, s, ac) {
+                a = addUnsigned(a, addUnsigned(addUnsigned(H(b, c, d), x), ac));
+                return addUnsigned(rotateLeft(a, s), b);
+            }
+            
+            function II(a, b, c, d, x, s, ac) {
+                a = addUnsigned(a, addUnsigned(addUnsigned(I(b, c, d), x), ac));
+                return addUnsigned(rotateLeft(a, s), b);
+            }
+            
+            function convertToWordArray(string) {
+                let lWordCount;
+                const lMessageLength = string.length;
+                const lNumberOfWords_temp1 = lMessageLength + 8;
+                const lNumberOfWords_temp2 = (lNumberOfWords_temp1 - (lNumberOfWords_temp1 % 64)) / 64;
+                const lNumberOfWords = (lNumberOfWords_temp2 + 1) * 16;
+                const lWordArray = new Array(lNumberOfWords - 1);
+                let lBytePosition = 0;
+                let lByteCount = 0;
+                
+                while (lByteCount < lMessageLength) {
+                    lWordCount = (lByteCount - (lByteCount % 4)) / 4;
+                    lBytePosition = (lByteCount % 4) * 8;
+                    lWordArray[lWordCount] = (lWordArray[lWordCount] | (string.charCodeAt(lByteCount) << lBytePosition));
+                    lByteCount++;
+                }
+                
+                lWordCount = (lByteCount - (lByteCount % 4)) / 4;
+                lBytePosition = (lByteCount % 4) * 8;
+                lWordArray[lWordCount] = lWordArray[lWordCount] | (0x80 << lBytePosition);
+                lWordArray[lNumberOfWords - 2] = lMessageLength << 3;
+                lWordArray[lNumberOfWords - 1] = lMessageLength >>> 29;
+                
+                return lWordArray;
+            }
+            
+            function wordToHex(value) {
+                let wordToHexValue = '', wordToHexValue_temp = '', byte, count;
+                for (count = 0; count <= 3; count++) {
+                    byte = (value >>> (count * 8)) & 255;
+                    wordToHexValue_temp = '0' + byte.toString(16);
+                    wordToHexValue = wordToHexValue + wordToHexValue_temp.substr(wordToHexValue_temp.length - 2, 2);
+                }
+                return wordToHexValue;
+            }
+            
+            const x = convertToWordArray(string);
+            let a = 0x67452301;
+            let b = 0xEFCDAB89;
+            let c = 0x98BADCFE;
+            let d = 0x10325476;
+            
+            for (let k = 0; k < x.length; k += 16) {
+                const AA = a, BB = b, CC = c, DD = d;
+                
+                a = FF(a, b, c, d, x[k + 0], 7, 0xD76AA478);
+                d = FF(d, a, b, c, x[k + 1], 12, 0xE8C7B756);
+                c = FF(c, d, a, b, x[k + 2], 17, 0x242070DB);
+                b = FF(b, c, d, a, x[k + 3], 22, 0xC1BDCEEE);
+                a = FF(a, b, c, d, x[k + 4], 7, 0xF57C0FAF);
+                d = FF(d, a, b, c, x[k + 5], 12, 0x4787C62A);
+                c = FF(c, d, a, b, x[k + 6], 17, 0xA8304613);
+                b = FF(b, c, d, a, x[k + 7], 22, 0xFD469501);
+                a = FF(a, b, c, d, x[k + 8], 7, 0x698098D8);
+                d = FF(d, a, b, c, x[k + 9], 12, 0x8B44F7AF);
+                c = FF(c, d, a, b, x[k + 10], 17, 0xFFFF5BB1);
+                b = FF(b, c, d, a, x[k + 11], 22, 0x895CD7BE);
+                a = FF(a, b, c, d, x[k + 12], 7, 0x6B901122);
+                d = FF(d, a, b, c, x[k + 13], 12, 0xFD987193);
+                c = FF(c, d, a, b, x[k + 14], 17, 0xA679438E);
+                b = FF(b, c, d, a, x[k + 15], 22, 0x49B40821);
+                a = GG(a, b, c, d, x[k + 1], 5, 0xF61E2562);
+                d = GG(d, a, b, c, x[k + 6], 9, 0xC040B340);
+                c = GG(c, d, a, b, x[k + 11], 14, 0x265E5A51);
+                b = GG(b, c, d, a, x[k + 0], 20, 0xE9B6C7AA);
+                a = GG(a, b, c, d, x[k + 5], 5, 0xD62F105D);
+                d = GG(d, a, b, c, x[k + 10], 9, 0x2441453);
+                c = GG(c, d, a, b, x[k + 15], 14, 0xD8A1E681);
+                b = GG(b, c, d, a, x[k + 4], 20, 0xE7D3FBC8);
+                a = GG(a, b, c, d, x[k + 9], 5, 0x21E1CDE6);
+                d = GG(d, a, b, c, x[k + 14], 9, 0xC33707D6);
+                c = GG(c, d, a, b, x[k + 3], 14, 0xF4D50D87);
+                b = GG(b, c, d, a, x[k + 8], 20, 0x455A14ED);
+                a = GG(a, b, c, d, x[k + 13], 5, 0xA9E3E905);
+                d = GG(d, a, b, c, x[k + 2], 9, 0xFCEFA3F8);
+                c = GG(c, d, a, b, x[k + 7], 14, 0x676F02D9);
+                b = GG(b, c, d, a, x[k + 12], 20, 0x8D2A4C8A);
+                a = HH(a, b, c, d, x[k + 5], 4, 0xFFFA3942);
+                d = HH(d, a, b, c, x[k + 8], 11, 0x8771F681);
+                c = HH(c, d, a, b, x[k + 11], 16, 0x6D9D6122);
+                b = HH(b, c, d, a, x[k + 14], 23, 0xFDE5380C);
+                a = HH(a, b, c, d, x[k + 1], 4, 0xA4BEEA44);
+                d = HH(d, a, b, c, x[k + 4], 11, 0x4BDECFA9);
+                c = HH(c, d, a, b, x[k + 7], 16, 0xF6BB4B60);
+                b = HH(b, c, d, a, x[k + 10], 23, 0xBEBFBC70);
+                a = HH(a, b, c, d, x[k + 13], 4, 0x289B7EC6);
+                d = HH(d, a, b, c, x[k + 0], 11, 0xEAA127FA);
+                c = HH(c, d, a, b, x[k + 3], 16, 0xD4EF3085);
+                b = HH(b, c, d, a, x[k + 6], 23, 0x4881D05);
+                a = HH(a, b, c, d, x[k + 9], 4, 0xD9D4D039);
+                d = HH(d, a, b, c, x[k + 12], 11, 0xE6DB99E5);
+                c = HH(c, d, a, b, x[k + 15], 16, 0x1FA27CF8);
+                b = HH(b, c, d, a, x[k + 2], 23, 0xC4AC5665);
+                a = II(a, b, c, d, x[k + 0], 6, 0xF4292244);
+                d = II(d, a, b, c, x[k + 7], 10, 0x432AFF97);
+                c = II(c, d, a, b, x[k + 14], 15, 0xAB9423A7);
+                b = II(b, c, d, a, x[k + 5], 21, 0xFC93A039);
+                a = II(a, b, c, d, x[k + 12], 6, 0x655B59C3);
+                d = II(d, a, b, c, x[k + 3], 10, 0x8F0CCC92);
+                c = II(c, d, a, b, x[k + 10], 15, 0xFFEFF47D);
+                b = II(b, c, d, a, x[k + 1], 21, 0x85845DD1);
+                a = II(a, b, c, d, x[k + 8], 6, 0x6FA87E4F);
+                d = II(d, a, b, c, x[k + 15], 10, 0xFE2CE6E0);
+                c = II(c, d, a, b, x[k + 6], 15, 0xA3014314);
+                b = II(b, c, d, a, x[k + 13], 21, 0x4E0811A1);
+                a = II(a, b, c, d, x[k + 4], 6, 0xF7537E82);
+                d = II(d, a, b, c, x[k + 11], 10, 0xBD3AF235);
+                c = II(c, d, a, b, x[k + 2], 15, 0x2AD7D2BB);
+                b = II(b, c, d, a, x[k + 9], 21, 0xEB86D391);
+                
+                a = addUnsigned(a, AA);
+                b = addUnsigned(b, BB);
+                c = addUnsigned(c, CC);
+                d = addUnsigned(d, DD);
+            }
+            
+            return (wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d)).toLowerCase();
+        }
+
+        // Smart Detection functions
+        function smartDetect() {
+            const input = document.getElementById('smart-input').value;
+            if (!input) {
+                showMessage('smart-message', '분석할 텍스트를 입력하세요', 'error');
+                return;
+            }
+
+            const results = [];
+
+            // Test Base64
+            if (isBase64(input)) {
+                try {
+                    const decoded = decodeURIComponent(escape(atob(input)));
+                    results.push({
+                        type: 'Base64',
+                        value: decoded
+                    });
+                } catch (e) {}
+            }
+
+            // Test URL Encoding
+            if (isURLEncoded(input)) {
+                try {
+                    const decoded = decodeURIComponent(input);
+                    results.push({
+                        type: 'URL Encoding',
+                        value: decoded
+                    });
+                } catch (e) {}
+            }
+
+            // Test Double URL Encoding
+            try {
+                const firstDecode = decodeURIComponent(input);
+                const secondDecode = decodeURIComponent(firstDecode);
+                if (secondDecode !== firstDecode && secondDecode !== input) {
+                    results.push({
+                        type: 'Double URL Encoding',
+                        value: secondDecode
+                    });
+                }
+            } catch (e) {}
+
+            // Test HTML Entity
+            if (isHTMLEncoded(input)) {
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = input;
+                results.push({
+                    type: 'HTML Entity',
+                    value: textarea.value
+                });
+            }
+
+            // Test Hex
+            if (isHexEncoded(input)) {
+                try {
+                    const decoded = input.match(/.{1,2}/g)
+                        .map(byte => String.fromCharCode(parseInt(byte, 16)))
+                        .join('');
+                    results.push({
+                        type: 'Hex Encoding',
+                        value: decoded
+                    });
+                } catch (e) {}
+            }
+
+            // Test Unicode
+            if (isUnicodeEncoded(input)) {
+                try {
+                    const decoded = input.replace(/\\u([0-9a-fA-F]{4})/g, (match, grp) => {
+                        return String.fromCharCode(parseInt(grp, 16));
+                    });
+                    results.push({
+                        type: 'Unicode Escape',
+                        value: decoded
+                    });
+                } catch (e) {}
+            }
+
+            // Test JWT
+            if (input.split('.').length === 3) {
+                try {
+                    const parts = input.split('.');
+                    const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+                    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+                    results.push({
+                        type: 'JWT Token',
+                        value: 'Header: ' + JSON.stringify(header, null, 2) + '\n\nPayload: ' + JSON.stringify(payload, null, 2)
+                    });
+                } catch (e) {}
+            }
+
+            // Display results
+            if (results.length === 0) {
+                showMessage('smart-message', '⚠️ 인코딩을 감지할 수 없습니다. 평문이거나 지원하지 않는 인코딩입니다.', 'warning');
+                document.getElementById('smart-results').style.display = 'none';
+            } else {
+                let html = '';
+                results.forEach(result => {
+                    html += `
+                        <div class="detection-item">
+                            <div class="detection-type">✓ ${result.type} 감지됨</div>
+                            <div class="detection-value">${result.value}</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('smart-results-content').innerHTML = html;
+                document.getElementById('smart-results').style.display = 'block';
+                showMessage('smart-message', `✓ ${results.length}개의 인코딩 방식이 감지되었습니다`, 'success');
+            }
+        }
+
+        // Preset Payloads functions
+        function savePreset() {
+            const name = document.getElementById('preset-name').value.trim();
+            const category = document.getElementById('preset-category').value;
+            const payload = document.getElementById('preset-payload').value;
+
+            if (!name || !payload) {
+                showMessage('presets-message', '이름과 페이로드를 모두 입력하세요', 'error');
+                return;
+            }
+
+            // Get existing presets
+            let presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
+
+            // Add new preset
+            presets.push({
+                id: Date.now(),
+                name: name,
+                category: category,
+                payload: payload,
+                timestamp: new Date().toISOString()
+            });
+
+            // Save to localStorage
+            localStorage.setItem('securityPresets', JSON.stringify(presets));
+
+            // Clear inputs
+            document.getElementById('preset-name').value = '';
+            document.getElementById('preset-payload').value = '';
+
+            // Reload list
+            loadPresets();
+
+            showMessage('presets-message', '✓ 페이로드가 저장되었습니다', 'success');
+        }
+
+        function loadPresets() {
+            const presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
+            const filter = document.getElementById('preset-filter').value;
+
+            const filteredPresets = filter === 'all' 
+                ? presets 
+                : presets.filter(p => p.category === filter);
+
+            const listElement = document.getElementById('preset-list');
+
+            if (filteredPresets.length === 0) {
+                listElement.innerHTML = `
+                    <div style="text-align: center; padding: var(--space-20); color: var(--color-text-secondary);">
+                        저장된 페이로드가 없습니다.
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            filteredPresets.forEach(preset => {
+                const categoryLabels = {
+                    'sqli': 'SQL Injection',
+                    'xss': 'XSS',
+                    'lfi': 'LFI/Path Traversal',
+                    'xxe': 'XXE',
+                    'ssti': 'SSTI',
+                    'other': '기타'
+                };
+
+                html += `
+                    <div class="preset-item">
+                        <div style="flex: 1;">
+                            <div class="preset-name">${preset.name}</div>
+                            <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: 4px;">
+                                ${categoryLabels[preset.category] || preset.category}
+                            </div>
+                        </div>
+                        <div class="preset-actions">
+                            <button class="btn btn-secondary preset-btn" onclick="viewPreset(${preset.id})">👁️ 보기</button>
+                            <button class="btn btn-secondary preset-btn" onclick="copyPreset(${preset.id})">📋 복사</button>
+                            <button class="btn btn-secondary preset-btn" onclick="deletePreset(${preset.id})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listElement.innerHTML = html;
+        }
+
+        function filterPresets() {
+            loadPresets();
+        }
+
+        function viewPreset(id) {
+            const presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
+            const preset = presets.find(p => p.id === id);
+
+            if (preset) {
+                alert(`이름: ${preset.name}\n카테고리: ${preset.category}\n\n페이로드:\n${preset.payload}`);
+            }
+        }
+
+        function copyPreset(id) {
+            const presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
+            const preset = presets.find(p => p.id === id);
+
+            if (preset) {
+                navigator.clipboard.writeText(preset.payload).then(() => {
+                    showMessage('presets-message', '✓ 페이로드가 클립보드에 복사되었습니다', 'success');
+                });
+            }
+        }
+
+        function deletePreset(id) {
+            if (!confirm('이 페이로드를 삭제하시겠습니까?')) {
+                return;
+            }
+
+            let presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
+            presets = presets.filter(p => p.id !== id);
+            localStorage.setItem('securityPresets', JSON.stringify(presets));
+
+            loadPresets();
+            showMessage('presets-message', '✓ 페이로드가 삭제되었습니다', 'success');
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadPresets();
+        });
+    </script>
+</body>
+</html>
