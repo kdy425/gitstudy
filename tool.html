@@ -685,6 +685,16 @@
                     <span class="toggle-label">실시간 변환 활성화</span>
                 </div>
 
+                <!-- 인코딩 방식 선택 추가 -->
+                <div style="margin-bottom: var(--space-16);">
+                    <label for="html-encode-type">인코딩 방식</label>
+                    <select id="html-encode-type" style="width: 100%;">
+                        <option value="standard">기본 (특수 문자만)</option>
+                        <option value="decimal">10진수 HTML Entity (&#65;)</option>
+                        <option value="hex">16진수 HTML Entity (&#x41;)</option>
+                    </select>
+                </div>
+
                 <div class="dual-panel">
                     <div class="panel">
                         <label for="html-input">입력</label>
@@ -1226,16 +1236,42 @@
                 showMessage('html-message', '입력 텍스트를 입력하세요', 'error');
                 return;
             }
-            const encoded = input
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#x27;')
-                .replace(/\//g, '&#x2F;');
+            
+            const encodeType = document.getElementById('html-encode-type').value;
+            let encoded = '';
+            
+            switch(encodeType) {
+                case 'decimal':
+                    // 모든 문자를 10진수 HTML Entity로 변환
+                    encoded = Array.from(input)
+                        .map(c => '&#' + c.charCodeAt(0) + ';')
+                        .join('');
+                    break;
+                    
+                case 'hex':
+                    // 모든 문자를 16진수 HTML Entity로 변환
+                    encoded = Array.from(input)
+                        .map(c => '&#x' + c.charCodeAt(0).toString(16) + ';')
+                        .join('');
+                    break;
+                    
+                case 'standard':
+                default:
+                    // 기본: 특수 문자만 변환
+                    encoded = input
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#x27;')
+                        .replace(/\//g, '&#x2F;');
+                    break;
+            }
+    
             document.getElementById('html-output').value = encoded;
             showMessage('html-message', '✓ HTML 인코딩 완료', 'success');
         }
+
 
         function decodeHTML() {
             const input = document.getElementById('html-input').value;
@@ -1772,23 +1808,33 @@
                 } catch (e) {}
             }
 
-            // Display results
+                // Display results
             if (results.length === 0) {
-                showMessage('smart-message', '⚠️ 인코딩을 감지할 수 없습니다. 평문이거나 지원하지 않는 인코딩입니다.', 'warning');
+                showMessage('smart-message', '감지된 인코딩 방식이 없습니다.', 'warning');
                 document.getElementById('smart-results').style.display = 'none';
             } else {
-                let html = '';
+                const container = document.getElementById('smart-results-content');
+                container.innerHTML = ''; // 기존 내용 초기화
+                
                 results.forEach(result => {
-                    html += `
-                        <div class="detection-item">
-                            <div class="detection-type">✓ ${result.type} 감지됨</div>
-                            <div class="detection-value">${result.value}</div>
-                        </div>
-                    `;
+                    const detectionItem = document.createElement('div');
+                    detectionItem.className = 'detection-item';
+                    
+                    const detectionType = document.createElement('div');
+                    detectionType.className = 'detection-type';
+                    detectionType.textContent = result.type; // textContent 사용
+                    
+                    const detectionValue = document.createElement('div');
+                    detectionValue.className = 'detection-value';
+                    detectionValue.textContent = result.value; // textContent 사용 (XSS 방지)
+                    
+                    detectionItem.appendChild(detectionType);
+                    detectionItem.appendChild(detectionValue);
+                    container.appendChild(detectionItem);
                 });
-                document.getElementById('smart-results-content').innerHTML = html;
+                
                 document.getElementById('smart-results').style.display = 'block';
-                showMessage('smart-message', `✓ ${results.length}개의 인코딩 방식이 감지되었습니다`, 'success');
+                showMessage('smart-message', `✓ ${results.length}개의 인코딩 방식 감지`, 'success');
             }
         }
 
@@ -1799,7 +1845,13 @@
             const payload = document.getElementById('preset-payload').value;
 
             if (!name || !payload) {
-                showMessage('presets-message', '이름과 페이로드를 모두 입력하세요', 'error');
+                showMessage('presets-message', '이름과 페이로드를 입력하세요', 'error');
+                return;
+            }
+
+            // 이름 길이 제한 (선택사항)
+            if (name.length > 100) {
+                showMessage('presets-message', '이름은 100자 이하로 입력하세요', 'error');
                 return;
             }
 
@@ -1809,7 +1861,7 @@
             // Add new preset
             presets.push({
                 id: Date.now(),
-                name: name,
+                name: name,  // 사용자 입력이지만 textContent로만 출력하므로 안전
                 category: category,
                 payload: payload,
                 timestamp: new Date().toISOString()
@@ -1824,30 +1876,24 @@
 
             // Reload list
             loadPresets();
-
             showMessage('presets-message', '✓ 페이로드가 저장되었습니다', 'success');
         }
+
 
         function loadPresets() {
             const presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
             const filter = document.getElementById('preset-filter').value;
-
-            const filteredPresets = filter === 'all' 
-                ? presets 
-                : presets.filter(p => p.category === filter);
-
+            const filteredPresets = filter === 'all' ? presets : presets.filter(p => p.category === filter);
             const listElement = document.getElementById('preset-list');
 
             if (filteredPresets.length === 0) {
-                listElement.innerHTML = `
-                    <div style="text-align: center; padding: var(--space-20); color: var(--color-text-secondary);">
-                        저장된 페이로드가 없습니다.
-                    </div>
-                `;
+                listElement.innerHTML = '<div style="text-align: center; padding: var(--space-20); color: var(--color-text-secondary);">저장된 페이로드가 없습니다.</div>';
                 return;
             }
 
-            let html = '';
+            // innerHTML 대신 DOM API 사용
+            listElement.innerHTML = '';
+            
             filteredPresets.forEach(preset => {
                 const categoryLabels = {
                     'sqli': 'SQL Injection',
@@ -1858,25 +1904,54 @@
                     'other': '기타'
                 };
 
-                html += `
-                    <div class="preset-item">
-                        <div style="flex: 1;">
-                            <div class="preset-name">${preset.name}</div>
-                            <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-top: 4px;">
-                                ${categoryLabels[preset.category] || preset.category}
-                            </div>
-                        </div>
-                        <div class="preset-actions">
-                            <button class="btn btn-secondary preset-btn" onclick="viewPreset(${preset.id})">👁️ 보기</button>
-                            <button class="btn btn-secondary preset-btn" onclick="copyPreset(${preset.id})">📋 복사</button>
-                            <button class="btn btn-secondary preset-btn" onclick="deletePreset(${preset.id})">🗑️</button>
-                        </div>
-                    </div>
-                `;
-            });
+                // 요소 생성
+                const presetItem = document.createElement('div');
+                presetItem.className = 'preset-item';
 
-            listElement.innerHTML = html;
+                const infoDiv = document.createElement('div');
+                infoDiv.style.flex = '1';
+
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'preset-name';
+                nameDiv.textContent = preset.name;  // textContent 사용 (XSS 방지)
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.style.fontSize = 'var(--font-size-sm)';
+                categoryDiv.style.color = 'var(--color-text-secondary)';
+                categoryDiv.style.marginTop = '4px';
+                categoryDiv.textContent = categoryLabels[preset.category] || preset.category;  // textContent 사용
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'preset-actions';
+
+                // 버튼들 생성
+                const viewBtn = document.createElement('button');
+                viewBtn.className = 'btn btn-secondary preset-btn';
+                viewBtn.textContent = '👁️ 보기';
+                viewBtn.onclick = () => viewPreset(preset.id);
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'btn btn-secondary preset-btn';
+                copyBtn.textContent = '📋 복사';
+                copyBtn.onclick = () => copyPreset(preset.id);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-secondary preset-btn';
+                deleteBtn.textContent = '🗑️ 삭제';
+                deleteBtn.onclick = () => deletePreset(preset.id);
+
+                // 요소 조립
+                infoDiv.appendChild(nameDiv);
+                infoDiv.appendChild(categoryDiv);
+                actionsDiv.appendChild(viewBtn);
+                actionsDiv.appendChild(copyBtn);
+                actionsDiv.appendChild(deleteBtn);
+                presetItem.appendChild(infoDiv);
+                presetItem.appendChild(actionsDiv);
+                listElement.appendChild(presetItem);
+            });
         }
+
 
         function filterPresets() {
             loadPresets();
@@ -1885,11 +1960,56 @@
         function viewPreset(id) {
             const presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
             const preset = presets.find(p => p.id === id);
-
+            
             if (preset) {
-                alert(`이름: ${preset.name}\n카테고리: ${preset.category}\n\n페이로드:\n${preset.payload}`);
+                // alert 대신 안전한 모달이나 textarea에 표시
+                // 임시로는 콘솔에 출력하거나, 별도 textarea에 표시
+                const modal = document.createElement('div');
+                modal.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--color-surface); padding: var(--space-24); border-radius: var(--radius-lg); box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 1000; max-width: 600px; max-height: 80vh; overflow-y: auto;';
+                
+                const title = document.createElement('h3');
+                title.textContent = preset.name;  // textContent 사용
+                title.style.marginBottom = 'var(--space-16)';
+                
+                const category = document.createElement('p');
+                category.textContent = '카테고리: ' + ({'sqli': 'SQL Injection', 'xss': 'XSS', 'lfi': 'LFI/Path Traversal', 'xxe': 'XXE', 'ssti': 'SSTI', 'other': '기타'}[preset.category] || preset.category);
+                category.style.marginBottom = 'var(--space-12)';
+                category.style.color = 'var(--color-text-secondary)';
+                
+                const payloadLabel = document.createElement('p');
+                payloadLabel.textContent = '페이로드:';
+                payloadLabel.style.fontWeight = 'var(--font-weight-semibold)';
+                payloadLabel.style.marginBottom = 'var(--space-8)';
+                
+                const payloadText = document.createElement('pre');
+                payloadText.textContent = preset.payload;  // textContent 사용
+                payloadText.style.cssText = 'background: var(--color-background); padding: var(--space-12); border-radius: var(--radius-base); font-family: var(--font-family-mono); font-size: var(--font-size-sm); white-space: pre-wrap; word-break: break-all;';
+                
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'btn btn-primary';
+                closeBtn.textContent = '닫기';
+                closeBtn.style.marginTop = 'var(--space-16)';
+                closeBtn.style.width = '100%';
+                closeBtn.onclick = () => {
+                    document.body.removeChild(overlay);
+                    document.body.removeChild(modal);
+                };
+                
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;';
+                overlay.onclick = closeBtn.onclick;
+                
+                modal.appendChild(title);
+                modal.appendChild(category);
+                modal.appendChild(payloadLabel);
+                modal.appendChild(payloadText);
+                modal.appendChild(closeBtn);
+                
+                document.body.appendChild(overlay);
+                document.body.appendChild(modal);
             }
         }
+
 
         function copyPreset(id) {
             const presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
